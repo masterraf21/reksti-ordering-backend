@@ -1,0 +1,6 @@
+*.env*
+/node_modules
+docker*
+dump/
+*_add_dummy_data*
+scripts/
