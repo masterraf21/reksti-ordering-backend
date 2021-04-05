@@ -1,0 +1,9 @@
+DROP TABLE rating;
+DROP TABLE payment;
+DROP TABLE order_details;
+DROP TABLE menu;
+DROP TABLE orders;
+DROP TABLE site_info;
+DROP TABLE menu_type;
+DROP TABLE customer;
+DROP TABLE user;
