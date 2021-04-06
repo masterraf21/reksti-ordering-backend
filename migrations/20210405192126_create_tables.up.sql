@@ -1,8 +1,6 @@
 CREATE TABLE IF NOT EXISTS customer (
   `customer_id` int(11) NOT NULL AUTO_INCREMENT,
-  `customer_first_name` varchar(30) NOT NULL,
-  `customer_last_name` varchar(30) NOT NULL,
-  `customer_middle_name` varchar(30) NOT NULL,
+  `customer_full_name` varchar(30) NOT NULL,
   `customer_email` varchar(50) NOT NULL,
   `customer_phone_number` varchar(15) NOT NULL,
   `customer_username` varchar(30) NOT NULL,
@@ -77,19 +75,6 @@ CREATE TABLE IF NOT EXISTS rating (
   KEY `customer_id` (`customer_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
-CREATE TABLE IF NOT EXISTS site_info (
-  `site_info_id` int(11) NOT NULL AUTO_INCREMENT,
-  `site_name` varchar(30) NOT NULL,
-  `description` varchar(100) NOT NULL,
-  `contact_info` varchar(15) NOT NULL,
-  `address` varchar(100) NOT NULL,
-  `last_update` date NOT NULL,
-  `user_id` int(11) NOT NULL,
-  PRIMARY KEY (`site_info_id`),
-  KEY `user_id` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
-
-
 CREATE TABLE IF NOT EXISTS user (
   `user_id` int(11) NOT NULL AUTO_INCREMENT,
   `full_name` varchar(100) NOT NULL,
@@ -118,6 +103,3 @@ ALTER TABLE payment
 ALTER TABLE rating
   ADD CONSTRAINT `tblrating_ibfk_2` FOREIGN KEY (`customer_id`) REFERENCES customer (`customer_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `tblrating_ibfk_1` FOREIGN KEY (`menu_id`) REFERENCES menu (`menu_id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
-ALTER TABLE site_info
-  ADD CONSTRAINT `tblsiteinfo_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES user (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE;
