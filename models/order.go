@@ -7,7 +7,7 @@ type Order struct {
 	OrderID     uint32  `json:"order_id"`
 	CustomerID  uint32  `json:"customer_id"`
 	OrderDate   string  `json:"order_date"`
-	TotalPrice  float32 `json:"total_amount"`
+	TotalPrice  float32 `json:"total_price"`
 	OrderStatus int32   `json:"order_status,omitempty"` // 0:pending, 1:completed, 2:cancelled
 }
 
@@ -28,14 +28,15 @@ type OrderWithDetails struct {
 
 // OrderRepository represents repo object for order
 type OrderRepository interface {
-	UpdateTotalPrice(orderID uint32) error
 	GetByStatusAndCustID(status int32, custID uint32) ([]Order, error)
 	GetByCustID(custID uint32) ([]Order, error)
 	GetAll() ([]Order, error)
 	GetByID(OrderID uint32) (*Order, error)
 	UpdateByID(ctx context.Context, orderID uint32, order *Order) error
+	UpdateOrderStatus(ctx context.Context, orderID uint32, status int32) error
+	UpdateTotalPrice(ctx context.Context, orderID uint32) error
 	DeleteByID(ctx context.Context, OrderID uint32) error
-	Store(ctx context.Context, ord *Order) error
+	Store(ctx context.Context, ord *Order) (uint32, error)
 	BulkInsert(ctx context.Context, orders []Order) error
 }
 
