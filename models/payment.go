@@ -7,9 +7,8 @@ type Payment struct {
 	PaymentID   uint32  `json:"payment_id"`
 	OrderID     uint32  `json:"order_id"`
 	Amount      float32 `json:"amount"`
-	PaidBy      string  `json:"paid_by"`
+	PaymentType string  `json:"paymeny_type"`
 	PaymentDate string  `json:"payment_date"`
-	ProcessedBy uint32  `json:"processed_by"`
 }
 
 // PaymentRepository pymnerepo

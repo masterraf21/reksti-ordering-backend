@@ -31,21 +31,18 @@ CREATE TABLE IF NOT EXISTS orders (
   `order_id` int(11) NOT NULL AUTO_INCREMENT,
   `customer_id` int(11) NOT NULL,
   `order_date` date NOT NULL,
-  `total_amount` float NOT NULL,
-  `order_status` int(1) NOT NULL,
-  `processed_by` int(11) NOT NULL,
+  `total_price` float,
+  `order_status` int(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`order_id`),
-  KEY `customer_id` (`customer_id`,`processed_by`),
-  KEY `processed_by` (`processed_by`)
+  KEY `customer_id` (`customer_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 CREATE TABLE IF NOT EXISTS order_details (
   `order_details_id` int(11) NOT NULL AUTO_INCREMENT,
   `order_id` int(11) NOT NULL,
   `menu_id` int(11) NOT NULL,
-  `amount` float NOT NULL,
-  `no_of_serving` int(4) NOT NULL,
-  `total_amount` float NOT NULL,
+  `quantity` int(11) NOT NULL,
+  `total_price` float,
   PRIMARY KEY (`order_details_id`),
   KEY `order_id` (`order_id`,`menu_id`),
   KEY `menu_id` (`menu_id`)
@@ -55,12 +52,10 @@ CREATE TABLE IF NOT EXISTS payment (
   `payment_id` int(11) NOT NULL AUTO_INCREMENT,
   `order_id` int(11) NOT NULL,
   `amount` float NOT NULL,
-  `paid_by` varchar(50) NOT NULL,
+  'payment_type' varchar(50) NOT NULL,
   `payment_date` date NOT NULL,
-  `processed_by` int(11) NOT NULL,
   PRIMARY KEY (`payment_id`),
-  KEY `order_id` (`order_id`,`processed_by`),
-  KEY `processed_by` (`processed_by`)
+  KEY `order_id` (`order_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 CREATE TABLE IF NOT EXISTS rating (
@@ -75,22 +70,11 @@ CREATE TABLE IF NOT EXISTS rating (
   KEY `customer_id` (`customer_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
-CREATE TABLE IF NOT EXISTS user (
-  `user_id` int(11) NOT NULL AUTO_INCREMENT,
-  `full_name` varchar(100) NOT NULL,
-  `contact` varchar(50) NOT NULL,
-  `email_address` varchar(50) NOT NULL,
-  `username` varchar(30) NOT NULL,
-  `password` varchar(30) NOT NULL,
-  PRIMARY KEY (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
-
 ALTER TABLE menu
   ADD CONSTRAINT `tblmenu_ibfk_1` FOREIGN KEY (`menu_type_id`) REFERENCES menu_type (`menu_type_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE orders
   ADD CONSTRAINT `tblorder_ibfk_2` FOREIGN KEY (`customer_id`) REFERENCES customer (`customer_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `tblorder_ibfk_1` FOREIGN KEY (`processed_by`) REFERENCES user (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE order_details
   ADD CONSTRAINT `tblorderdetails_ibfk_2` FOREIGN KEY (`order_id`) REFERENCES orders (`order_id`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -98,7 +82,6 @@ ALTER TABLE order_details
 
 ALTER TABLE payment
   ADD CONSTRAINT `tblpayment_ibfk_2` FOREIGN KEY (`order_id`) REFERENCES orders (`order_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `tblpayment_ibfk_1` FOREIGN KEY (`processed_by`) REFERENCES user (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE rating
   ADD CONSTRAINT `tblrating_ibfk_2` FOREIGN KEY (`customer_id`) REFERENCES customer (`customer_id`) ON DELETE CASCADE ON UPDATE CASCADE,
