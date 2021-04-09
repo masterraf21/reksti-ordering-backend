@@ -52,7 +52,7 @@ CREATE TABLE IF NOT EXISTS payment (
   `payment_id` int(11) NOT NULL AUTO_INCREMENT,
   `order_id` int(11) NOT NULL,
   `amount` float NOT NULL,
-  'payment_type' varchar(50) NOT NULL,
+  `payment_type` varchar(50) NOT NULL,
   `payment_date` date NOT NULL,
   PRIMARY KEY (`payment_id`),
   KEY `order_id` (`order_id`)
@@ -74,14 +74,14 @@ ALTER TABLE menu
   ADD CONSTRAINT `tblmenu_ibfk_1` FOREIGN KEY (`menu_type_id`) REFERENCES menu_type (`menu_type_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE orders
-  ADD CONSTRAINT `tblorder_ibfk_2` FOREIGN KEY (`customer_id`) REFERENCES customer (`customer_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `tblorder_ibfk_2` FOREIGN KEY (`customer_id`) REFERENCES customer (`customer_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE order_details
   ADD CONSTRAINT `tblorderdetails_ibfk_2` FOREIGN KEY (`order_id`) REFERENCES orders (`order_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `tblorderdetails_ibfk_1` FOREIGN KEY (`menu_id`) REFERENCES menu (`menu_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE payment
-  ADD CONSTRAINT `tblpayment_ibfk_2` FOREIGN KEY (`order_id`) REFERENCES orders (`order_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `tblpayment_ibfk_2` FOREIGN KEY (`order_id`) REFERENCES orders (`order_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE rating
   ADD CONSTRAINT `tblrating_ibfk_2` FOREIGN KEY (`customer_id`) REFERENCES customer (`customer_id`) ON DELETE CASCADE ON UPDATE CASCADE,

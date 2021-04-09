@@ -27,12 +27,12 @@ migrate-test-down:
 migrate-dev-up:
 	migrate \
   	-source file://migrations \
-  	-database "mysql://user:password@tcp(localhost:3326)/ranker_worker" up
+  	-database "mysql://user:password@tcp(localhost:3326)/ordering" up
 
 migrate-dev-down:
 	migrate \
   	-source file://migrations \
-  	-database "mysql://user:password@tcp(localhost:3326)/ranker_worker" down
+  	-database "mysql://user:password@tcp(localhost:3326)/ordering" down
  
 mock:
 	@mockery --dir models --all
