@@ -5,6 +5,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/masterraf21/reksti-ordering-backend/models"
+	httpUtils "github.com/masterraf21/reksti-ordering-backend/utils/http"
 )
 
 type orderAPI struct {
@@ -22,6 +23,24 @@ func NewOrderAPI(r *mux.Router, ouc models.OrderUsecase) {
 }
 
 func (t *orderAPI) getAllOrders(w http.ResponseWriter, r *http.Request) {
+	result, err := t.orderUsecase.GetAllOrders()
+	if err != nil {
+		httpUtils.HandleError(
+			w,
+			r,
+			err,
+			"failed to get order data",
+			http.StatusInternalServerError,
+		)
+		return
+	}
+
+	var data struct {
+		Data []models.Order `json:"data"`
+	}
+
+	data.Data = result
+	httpUtils.HandleJSONResponse(w, r, data)
 }
 
 func (t *orderAPI) createOrder(w http.ResponseWriter, r *http.Request) {

@@ -28,6 +28,89 @@ func (r *orderRepo) UpdateTotalPrice(
 	ctx context.Context,
 	orderID uint32,
 ) error {
+	orderDetails, err := r.GetOrderDetailsByOrderID(orderID)
+	if err != nil {
+		return err
+	}
+
+	var totalPrice float32
+
+	for _, ord := range orderDetails {
+		totalPrice += ord.TotalPrice
+	}
+
+	err = r.UpdateArbitrary(
+		ctx,
+		orderID,
+		"total_price",
+		totalPrice,
+	)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (r *orderRepo) UpdateArbitrary(
+	ctx context.Context,
+	orderID uint32,
+	columnName string,
+	value interface{},
+) error {
+	table := "orders"
+	query := sq.Update(table).
+		Where(sq.Eq{
+			"order_id": orderID,
+		}).
+		Set(columnName, value).
+		RunWith(r.Writer).
+		PlaceholderFormat(sq.Question)
+	_, err := query.ExecContext(ctx)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (r *orderRepo) GetOrderDetailsByOrderID(
+	orderID uint32,
+) (res []models.OrderDetails, err error) {
+	table := "order_details"
+
+	query := sq.Select("*").
+		From(table).
+		Where(
+			sq.Eq{
+				"order_id": orderID,
+			},
+		).
+		RunWith(r.Reader).
+		PlaceholderFormat(sq.Question)
+
+	rows, err := query.Query()
+	if err != nil {
+		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var r models.OrderDetails
+		err = rows.Scan(
+			&r.OrderDetailsID,
+			&r.OrderID,
+			&r.MenuID,
+			&r.Quantity,
+			&r.TotalPrice,
+		)
+		if err != nil {
+			logger.Error("Selection Failed: " + err.Error())
+		}
+		res = append(res, r)
+	}
+
+	return
 }
 
 func (r *orderRepo) UpdateOrderStatus(

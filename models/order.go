@@ -13,7 +13,7 @@ type Order struct {
 
 // OrderDetails represent order_details data
 type OrderDetails struct {
-	OrderDetailsID uint32  `json:"order_deatils_id"`
+	OrderDetailsID uint32  `json:"order_details_id"`
 	OrderID        uint32  `json:"order_id"`
 	MenuID         uint32  `json:"menu_id"`
 	Quantity       uint32  `json:"quantity"`
@@ -30,8 +30,15 @@ type OrderWithDetails struct {
 type OrderRepository interface {
 	GetByStatusAndCustID(status int32, custID uint32) ([]Order, error)
 	GetByCustID(custID uint32) ([]Order, error)
+	GetOrderDetailsByOrderID(orderID uint32) ([]OrderDetails, error)
 	GetAll() ([]Order, error)
 	GetByID(OrderID uint32) (*Order, error)
+	UpdateArbitrary(
+		ctx context.Context,
+		orderID uint32,
+		columnName string,
+		value interface{},
+	) error
 	UpdateByID(ctx context.Context, orderID uint32, order *Order) error
 	UpdateOrderStatus(ctx context.Context, orderID uint32, status int32) error
 	UpdateTotalPrice(ctx context.Context, orderID uint32) error
@@ -42,13 +49,19 @@ type OrderRepository interface {
 
 // OrderDetailsRepository represents repo object for order
 type OrderDetailsRepository interface {
-	UpdateTotalPrice(orderDetailsID uint32) error
-	GetOrderDetailsByOrderID(orderID uint32) []OrderDetails
+	GetOrderDetailsByOrderID(orderID uint32) ([]OrderDetails, error)
 	GetAll() ([]OrderDetails, error)
-	GetByID(OrderID uint32) (*OrderDetails, error)
-	Update(OrderID uint32, order *OrderDetails) error
-	DeleteByID(OrderID uint32) error
-	Store(ctx context.Context, ord *Order) error
+	GetByID(orderDetailsID uint32) (*OrderDetails, error)
+	UpdateByID(ctx context.Context, orderDetailsID uint32, order *OrderDetails) error
+	UpdateTotalPrice(ctx context.Context, orderDetailsID uint32) error
+	UpdateArbitrary(
+		ctx context.Context,
+		orderDetailsID uint32,
+		columnName string,
+		value interface{},
+	) error
+	DeleteByID(ctx context.Context, orderDetailsID uint32) error
+	Store(ctx context.Context, ord *OrderDetails) (uint32, error)
 	BulkInsert(ctx context.Context, orderdetails []OrderDetails) error
 }
 
@@ -60,7 +73,7 @@ type OrderUsecase interface {
 	GetOrdersByCustID(customerID uint32) ([]Order, error)
 	GetOrdersHistoryByCustID(customerID uint32) ([]Order, error)
 	GetOngoingOrdersyByCustID(customerID uint32) ([]Order, error)
-	CreateOrder(ctx context.Context, order *Order) error
+	CreateOrder(ctx context.Context, order *Order) (uint32, error)
 	BulkCreateOrders(ctx context.Context, orders []Order) error
-	UpdateOrder(ctx context.Context, orderID, order *Order) error
+	UpdateOrder(ctx context.Context, orderID uint32, order *Order) error
 }

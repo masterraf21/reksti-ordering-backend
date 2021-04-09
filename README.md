@@ -22,6 +22,18 @@ To modify database schema, make new migration files by using command below:
 migrate create -ext sql -dir migrations [migration_name]
 ```
 
+There is already script to run migrations in Makefile using test or development configuration
+
+```shell
+make migrate-test-up 
+```
+
+```shell
+make migrate-dev-up 
+```
+
+You can change the database configs for migrations
+
 # Run Program
 
 ## Without Docker
@@ -53,16 +65,3 @@ You can store environment variables to a file, such as ".env". But, if you want 
 ./cmds/env .env go run main.go
 ```
 
-## With Docker
-
-To run using docker, you still need to store environment variables to a file, the name should be ".env". To run the program, you only need to run command below.
-
-```shell
-export PORT=[your_desired_port] && docker-compose up
-```
-
-When you modify your code, you need to rebuild the container. You can run command below.
-
-```shell
-docker-compose build
-```
