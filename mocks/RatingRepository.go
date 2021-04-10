@@ -3,8 +3,6 @@
 package mocks
 
 import (
-	context "context"
-
 	models "github.com/masterraf21/reksti-ordering-backend/models"
 	mock "github.com/stretchr/testify/mock"
 )
@@ -14,8 +12,22 @@ type RatingRepository struct {
 	mock.Mock
 }
 
-// DeleteById provides a mock function with given fields: ratingID
-func (_m *RatingRepository) DeleteById(ratingID uint32) error {
+// BulkInsert provides a mock function with given fields: Rating
+func (_m *RatingRepository) BulkInsert(Rating []models.Rating) error {
+	ret := _m.Called(Rating)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func([]models.Rating) error); ok {
+		r0 = rf(Rating)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// DeleteByID provides a mock function with given fields: ratingID
+func (_m *RatingRepository) DeleteByID(ratingID uint32) error {
 	ret := _m.Called(ratingID)
 
 	var r0 error
@@ -51,8 +63,8 @@ func (_m *RatingRepository) GetAll() ([]models.Rating, error) {
 	return r0, r1
 }
 
-// GetById provides a mock function with given fields: ratingID
-func (_m *RatingRepository) GetById(ratingID uint32) (*models.Rating, error) {
+// GetByID provides a mock function with given fields: ratingID
+func (_m *RatingRepository) GetByID(ratingID uint32) (*models.Rating, error) {
 	ret := _m.Called(ratingID)
 
 	var r0 *models.Rating
@@ -74,27 +86,78 @@ func (_m *RatingRepository) GetById(ratingID uint32) (*models.Rating, error) {
 	return r0, r1
 }
 
-// Store provides a mock function with given fields: rating
-func (_m *RatingRepository) Store(rating *models.Rating) error {
-	ret := _m.Called(rating)
+// GetByMenu provides a mock function with given fields: menuID
+func (_m *RatingRepository) GetByMenu(menuID uint32) ([]models.Rating, error) {
+	ret := _m.Called(menuID)
 
-	var r0 error
-	if rf, ok := ret.Get(0).(func(*models.Rating) error); ok {
-		r0 = rf(rating)
+	var r0 []models.Rating
+	if rf, ok := ret.Get(0).(func(uint32) []models.Rating); ok {
+		r0 = rf(menuID)
 	} else {
-		r0 = ret.Error(0)
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]models.Rating)
+		}
 	}
 
-	return r0
+	var r1 error
+	if rf, ok := ret.Get(1).(func(uint32) error); ok {
+		r1 = rf(menuID)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }
 
-// Update provides a mock function with given fields: ctx, rating
-func (_m *RatingRepository) Update(ctx context.Context, rating *models.Rating) error {
-	ret := _m.Called(ctx, rating)
+// GetMenuScore provides a mock function with given fields: menuID
+func (_m *RatingRepository) GetMenuScore(menuID uint32) (float32, error) {
+	ret := _m.Called(menuID)
+
+	var r0 float32
+	if rf, ok := ret.Get(0).(func(uint32) float32); ok {
+		r0 = rf(menuID)
+	} else {
+		r0 = ret.Get(0).(float32)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(uint32) error); ok {
+		r1 = rf(menuID)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// Store provides a mock function with given fields: rating
+func (_m *RatingRepository) Store(rating *models.Rating) (uint32, error) {
+	ret := _m.Called(rating)
+
+	var r0 uint32
+	if rf, ok := ret.Get(0).(func(*models.Rating) uint32); ok {
+		r0 = rf(rating)
+	} else {
+		r0 = ret.Get(0).(uint32)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(*models.Rating) error); ok {
+		r1 = rf(rating)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// UpdateByID provides a mock function with given fields: ratingID, order
+func (_m *RatingRepository) UpdateByID(ratingID uint32, order *models.Rating) error {
+	ret := _m.Called(ratingID, order)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, *models.Rating) error); ok {
-		r0 = rf(ctx, rating)
+	if rf, ok := ret.Get(0).(func(uint32, *models.Rating) error); ok {
+		r0 = rf(ratingID, order)
 	} else {
 		r0 = ret.Error(0)
 	}
