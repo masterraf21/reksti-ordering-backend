@@ -84,6 +84,15 @@ func (s *Server) Start() {
 
 	apis.NewOrderAPI(r, orderUsecase)
 
+	menuRepo := repoMysql.NewMenuRepo(s.Reader, s.Writer)
+	menuTypeRepo := repoMysql.NewMenuTypeRepo(s.Reader, s.Writer)
+
+	apis.NewMenuAPI(r, menuRepo, menuTypeRepo)
+
+	ratingRepo := repoMysql.NewRatingRepo(s.Reader, s.Writer)
+
+	apis.NewRatingAPI(r, ratingRepo)
+
 	srv := &http.Server{
 		Handler:      r,
 		Addr:         ":" + port,
