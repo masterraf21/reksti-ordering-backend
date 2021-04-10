@@ -19,6 +19,15 @@ type MenuType struct {
 	Description string `json:"description"`
 }
 
+type MenuComp struct {
+	MenuID      uint32  `json:"menu_id"`
+	Name        string  `json:"menu_name"`
+	Price       float32 `json:"price"`
+	MenuType  MenuType  `json:"menu_type"`
+	Ingredients string  `json:"ingredients"`
+	MenuStatus  bool    `json:"menu_status"`
+}
+
 // MenuRepository nn
 type MenuRepository interface {
 	GetAll() ([]Menu, error)
@@ -37,4 +46,14 @@ type MenuTypeRepository interface {
 	DeleteByID(ctx context.Context, mtypeID uint32) error
 	Store(ctx context.Context, ord *MenuType) (menuTypeID uint32, err error)
 	BulkInsert(ctx context.Context, MenuType []MenuType) error
+}
+
+type MenuUsecase interface {
+	GetAll() (res []MenuComp, err error)
+	CreateMenu(ctx context.Context, order *Menu) (id uint32, err error)
+	DeleteMenu(ctx context.Context, id uint32) (res MenuComp, err error)
+	GetByID(id uint32) (res MenuComp, err error)
+	GetAllType() (res []MenuType, err error)
+	CreateType(ctx context.Context, m *MenuType) (id uint32, err error)
+	DeleteType(ctx context.Context, id uint32) (res *MenuType, err error)
 }
