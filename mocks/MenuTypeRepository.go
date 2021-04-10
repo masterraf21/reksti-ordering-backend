@@ -14,6 +14,20 @@ type MenuTypeRepository struct {
 	mock.Mock
 }
 
+// BulkInsert provides a mock function with given fields: ctx, MenuType
+func (_m *MenuTypeRepository) BulkInsert(ctx context.Context, MenuType []models.MenuType) error {
+	ret := _m.Called(ctx, MenuType)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, []models.MenuType) error); ok {
+		r0 = rf(ctx, MenuType)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // DeleteByID provides a mock function with given fields: ctx, mtypeID
 func (_m *MenuTypeRepository) DeleteByID(ctx context.Context, mtypeID uint32) error {
 	ret := _m.Called(ctx, mtypeID)
@@ -74,13 +88,34 @@ func (_m *MenuTypeRepository) GetByID(menuTypeID uint32) (*models.MenuType, erro
 	return r0, r1
 }
 
-// Update provides a mock function with given fields: ctx, mtype
-func (_m *MenuTypeRepository) Update(ctx context.Context, mtype *models.MenuType) error {
-	ret := _m.Called(ctx, mtype)
+// Store provides a mock function with given fields: ctx, ord
+func (_m *MenuTypeRepository) Store(ctx context.Context, ord *models.MenuType) (uint32, error) {
+	ret := _m.Called(ctx, ord)
+
+	var r0 uint32
+	if rf, ok := ret.Get(0).(func(context.Context, *models.MenuType) uint32); ok {
+		r0 = rf(ctx, ord)
+	} else {
+		r0 = ret.Get(0).(uint32)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, *models.MenuType) error); ok {
+		r1 = rf(ctx, ord)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// UpdateByID provides a mock function with given fields: ctx, menuTypeID, order
+func (_m *MenuTypeRepository) UpdateByID(ctx context.Context, menuTypeID uint32, order *models.MenuType) error {
+	ret := _m.Called(ctx, menuTypeID, order)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, *models.MenuType) error); ok {
-		r0 = rf(ctx, mtype)
+	if rf, ok := ret.Get(0).(func(context.Context, uint32, *models.MenuType) error); ok {
+		r0 = rf(ctx, menuTypeID, order)
 	} else {
 		r0 = ret.Error(0)
 	}
