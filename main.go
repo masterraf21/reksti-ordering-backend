@@ -86,8 +86,9 @@ func (s *Server) Start() {
 
 	menuRepo := repoMysql.NewMenuRepo(s.Reader, s.Writer)
 	menuTypeRepo := repoMysql.NewMenuTypeRepo(s.Reader, s.Writer)
+	menuUsecase := usecases.NewMenuUsecase(menuRepo, menuTypeRepo)
 
-	apis.NewMenuAPI(r, menuRepo, menuTypeRepo)
+	apis.NewMenuAPI(r, menuUsecase)
 
 	ratingRepo := repoMysql.NewRatingRepo(s.Reader, s.Writer)
 
