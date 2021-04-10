@@ -12,24 +12,13 @@ import (
 )
 
 type menuAPI struct {
-	menuRepo models.MenuRepository
-	menuTypeRepo models.MenuTypeRepository
-}
-
-type menu struct {
-	MenuID      uint32  `json:"menu_id"`
-	Name        string  `json:"menu_name"`
-	Price       float32 `json:"price"`
-	MenuType  models.MenuType  `json:"menu_type"`
-	Ingredients string  `json:"ingredients"`
-	MenuStatus  bool    `json:"menu_status"`
+	menuUsecase models.MenuUsecase
 }
 
 // NewOrderAPI will initiate menu API
-func NewMenuAPI(r *mux.Router, mr models.MenuRepository, mtr models.MenuTypeRepository) {
+func NewMenuAPI(r *mux.Router, mu models.MenuUsecase) {
 	menuAPI := &menuAPI{
-		menuRepo: mr,
-		menuTypeRepo: mtr,
+		menuUsecase: mu,
 	}
 
 	r.HandleFunc("/menu", menuAPI.getAll).Methods("GET")
@@ -42,7 +31,7 @@ func NewMenuAPI(r *mux.Router, mr models.MenuRepository, mtr models.MenuTypeRepo
 }
 
 func (t *menuAPI) getAll(w http.ResponseWriter, r *http.Request) {
-	menuRAW, err := t.menuRepo.GetAll()
+	result, err := t.menuUsecase.GetAll()
 	if err != nil {
 		httpUtils.HandleError(
 			w,
@@ -54,29 +43,8 @@ func (t *menuAPI) getAll(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result := make([]menu, len(menuRAW))
-	for i, m := range menuRAW {
-		result[i].MenuID = m.MenuID
-		result[i].Name = m.Name
-		result[i].Price = m.Price
-		typeTemp, err := t.menuTypeRepo.GetByID(m.MenuTypeID)
-		if err != nil {
-			httpUtils.HandleError(
-				w,
-				r,
-				err,
-				"failed to get menu data",
-				http.StatusInternalServerError,
-			)
-			return
-		}
-		result[i].MenuType = *typeTemp
-		result[i].Ingredients = m.Ingredients
-		result[i].MenuStatus = m.MenuStatus
-	}
-
 	var data struct {
-		Data []menu `json:"data"`
+		Data []models.MenuComp `json:"data"`
 	}
 
 	data.Data = result
@@ -90,7 +58,7 @@ func (t *menuAPI) createMenu(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	id, err := t.menuRepo.Store(context.Background(), &m)
+	id, err := t.menuUsecase.CreateMenu(context.Background(), &m)
 	m.MenuID = id
 	if err != nil {
 		fmt.Println(err)
@@ -109,35 +77,12 @@ func (t *menuAPI) createMenu(w http.ResponseWriter, r *http.Request) {
 
 func (t *menuAPI) deleteMenu(w http.ResponseWriter, r *http.Request) {
     id, err := strconv.Atoi(mux.Vars(r)["id"])
-    m, err := t.menuRepo.GetByID(uint32(id))
-    if err != nil {
-        w.WriteHeader(http.StatusNotFound)
-        return
-    }
-	err = t.menuRepo.DeleteByID(context.Background(), uint32(id))
+	res, err := t.menuUsecase.DeleteMenu(context.Background(), uint32(id))
 	if err != nil {
 		fmt.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	var res = menu{}
-	res.MenuID = m.MenuID
-	res.Name = m.Name
-	res.Price = m.Price
-	typeTemp, err := t.menuTypeRepo.GetByID(m.MenuTypeID)
-	if err != nil {
-		httpUtils.HandleError(
-			w,
-			r,
-			err,
-			"failed to get menu data",
-			http.StatusInternalServerError,
-		)
-		return
-	}
-	res.MenuType = *typeTemp
-	res.Ingredients = m.Ingredients
-	res.MenuStatus = m.MenuStatus
     w.Header().Add("Content-Type", "application/json")
     if err := json.NewEncoder(w).Encode(res); err != nil {
         fmt.Println(err)
@@ -147,29 +92,11 @@ func (t *menuAPI) deleteMenu(w http.ResponseWriter, r *http.Request) {
 
 func (t *menuAPI) getByID(w http.ResponseWriter, r *http.Request) {
     id, err := strconv.Atoi(mux.Vars(r)["id"])
-    m, err := t.menuRepo.GetByID(uint32(id))
+    res, err := t.menuUsecase.GetByID(uint32(id))
     if err != nil {
         w.WriteHeader(http.StatusNotFound)
         return
     }
-	var res = menu{}
-	res.MenuID = m.MenuID
-	res.Name = m.Name
-	res.Price = m.Price
-	typeTemp, err := t.menuTypeRepo.GetByID(m.MenuTypeID)
-	if err != nil {
-		httpUtils.HandleError(
-			w,
-			r,
-			err,
-			"failed to get menu data",
-			http.StatusInternalServerError,
-		)
-		return
-	}
-	res.MenuType = *typeTemp
-	res.Ingredients = m.Ingredients
-	res.MenuStatus = m.MenuStatus
     w.Header().Add("Content-Type", "application/json")
     if err := json.NewEncoder(w).Encode(res); err != nil {
         fmt.Println(err)
@@ -178,7 +105,7 @@ func (t *menuAPI) getByID(w http.ResponseWriter, r *http.Request) {
 }
 
 func (t *menuAPI) getAllType(w http.ResponseWriter, r *http.Request) {
-	result, err := t.menuTypeRepo.GetAll()
+	result, err := t.menuUsecase.GetAllType()
 	if err != nil {
 		httpUtils.HandleError(
 			w,
@@ -205,7 +132,7 @@ func (t *menuAPI) createType(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	id, err := t.menuTypeRepo.Store(context.Background(), &m)
+	id, err := t.menuUsecase.CreateType(context.Background(), &m)
 	m.MenuTypeID = id
 	if err != nil {
 		fmt.Println(err)
@@ -224,12 +151,7 @@ func (t *menuAPI) createType(w http.ResponseWriter, r *http.Request) {
 
 func (t *menuAPI) deleteType(w http.ResponseWriter, r *http.Request) {
     id, err := strconv.Atoi(mux.Vars(r)["id"])
-    m, err := t.menuTypeRepo.GetByID(uint32(id))
-    if err != nil {
-        w.WriteHeader(http.StatusNotFound)
-        return
-    }
-	err = t.menuTypeRepo.DeleteByID(context.Background(), uint32(id))
+    m, err := t.menuUsecase.DeleteType(context.Background(), uint32(id))
 	if err != nil {
 		fmt.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
