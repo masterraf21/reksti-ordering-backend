@@ -49,6 +49,20 @@ func (_m *OrderUsecase) CreateOrder(ctx context.Context, order *models.Order) (u
 	return r0, r1
 }
 
+// CreateOrderDetail provides a mock function with given fields: ctx, orderID, orderD
+func (_m *OrderUsecase) CreateOrderDetail(ctx context.Context, orderID uint32, orderD *models.OrderDetails) error {
+	ret := _m.Called(ctx, orderID, orderD)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, uint32, *models.OrderDetails) error); ok {
+		r0 = rf(ctx, orderID, orderD)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // GetAllOrders provides a mock function with given fields:
 func (_m *OrderUsecase) GetAllOrders() ([]models.Order, error) {
 	ret := _m.Called()

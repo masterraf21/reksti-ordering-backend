@@ -4,7 +4,7 @@ import "context"
 
 // Order represent orders data
 type Order struct {
-	OrderID     uint32  `json:"order_id"`
+	OrderID     uint32  `json:"order_id"` // auto increment
 	CustomerID  uint32  `json:"customer_id"`
 	OrderDate   string  `json:"order_date"`
 	TotalPrice  float32 `json:"total_price"`
@@ -61,7 +61,7 @@ type OrderDetailsRepository interface {
 		value interface{},
 	) error
 	DeleteByID(ctx context.Context, orderDetailsID uint32) error
-	Store(ctx context.Context, ord *OrderDetails) (uint32, error)
+	Store(ctx context.Context, ord *OrderDetails) error
 	BulkInsert(ctx context.Context, orderdetails []OrderDetails) error
 }
 
@@ -70,10 +70,16 @@ type OrderUsecase interface {
 	GetOrderWithDetails(orderID uint32) (OrderWithDetails, error)
 	GetAllOrders() ([]Order, error)
 	GetOrderByID(orderID uint32) (*Order, error)
+	GetOrderDetailByID(orderID uint32) (*OrderDetails, error)
 	GetOrdersByCustID(customerID uint32) ([]Order, error)
 	GetOrdersHistoryByCustID(customerID uint32) ([]Order, error)
 	GetOngoingOrdersyByCustID(customerID uint32) ([]Order, error)
 	CreateOrder(ctx context.Context, order *Order) (uint32, error)
 	BulkCreateOrders(ctx context.Context, orders []Order) error
 	UpdateOrder(ctx context.Context, orderID uint32, order *Order) error
+	UpdateOrderPrice(ctx context.Context, orderID uint32) error
+	UpdateOrderDetailPrice(ctx context.Context, orderDetailID uint32) error
+	CreateOrderDetail(ctx context.Context, orderD *OrderDetails) error
+	DeleteOrder(ctx context.Context, orderID uint32) error
+	DeleteOrderDetail(ctx context.Context, orderDetailID uint32) error
 }

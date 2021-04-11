@@ -1,10 +1,11 @@
 package apis
 
 import (
-	"net/http"
 	"encoding/json"
-	"strconv"
 	"fmt"
+	"net/http"
+	"strconv"
+
 	"github.com/gorilla/mux"
 	"github.com/masterraf21/reksti-ordering-backend/models"
 	httpUtils "github.com/masterraf21/reksti-ordering-backend/utils/http"
@@ -14,7 +15,7 @@ type ratingAPI struct {
 	ratingRepo models.RatingRepository
 }
 
-// NewOrderAPI will initiate rating API
+// NewRatingAPI will initiate rating API
 func NewRatingAPI(r *mux.Router, rr models.RatingRepository) {
 	ratingAPI := &ratingAPI{
 		ratingRepo: rr,
@@ -74,63 +75,63 @@ func (t *ratingAPI) createRating(w http.ResponseWriter, r *http.Request) {
 }
 
 func (t *ratingAPI) deleteRating(w http.ResponseWriter, r *http.Request) {
-    id, err := strconv.Atoi(mux.Vars(r)["id"])
-    m, err := t.ratingRepo.GetByID(uint32(id))
-    if err != nil {
-        w.WriteHeader(http.StatusNotFound)
-        return
-    }
+	id, err := strconv.Atoi(mux.Vars(r)["id"])
+	m, err := t.ratingRepo.GetByID(uint32(id))
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
 	err = t.ratingRepo.DeleteByID(uint32(id))
 	if err != nil {
 		fmt.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-    w.Header().Add("Content-Type", "application/json")
-    if err := json.NewEncoder(w).Encode(m); err != nil {
-        fmt.Println(err)
-        w.WriteHeader(http.StatusInternalServerError)
-    }
+	w.Header().Add("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(m); err != nil {
+		fmt.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+	}
 }
 
 func (t *ratingAPI) getByID(w http.ResponseWriter, r *http.Request) {
-    id, err := strconv.Atoi(mux.Vars(r)["id"])
-    m, err := t.ratingRepo.GetByID(uint32(id))
-    if err != nil {
-        w.WriteHeader(http.StatusNotFound)
-        return
-    }
-    w.Header().Add("Content-Type", "application/json")
-    if err := json.NewEncoder(w).Encode(m); err != nil {
-        fmt.Println(err)
-        w.WriteHeader(http.StatusInternalServerError)
-    }
+	id, err := strconv.Atoi(mux.Vars(r)["id"])
+	m, err := t.ratingRepo.GetByID(uint32(id))
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+	w.Header().Add("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(m); err != nil {
+		fmt.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+	}
 }
 
 func (t *ratingAPI) getByMenu(w http.ResponseWriter, r *http.Request) {
-    id, err := strconv.Atoi(mux.Vars(r)["id"])
-    m, err := t.ratingRepo.GetByMenu(uint32(id))
-    if err != nil {
-        w.WriteHeader(http.StatusNotFound)
-        return
-    }
-    w.Header().Add("Content-Type", "application/json")
-    if err := json.NewEncoder(w).Encode(m); err != nil {
-        fmt.Println(err)
-        w.WriteHeader(http.StatusInternalServerError)
-    }
+	id, err := strconv.Atoi(mux.Vars(r)["id"])
+	m, err := t.ratingRepo.GetByMenu(uint32(id))
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+	w.Header().Add("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(m); err != nil {
+		fmt.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+	}
 }
 
 func (t *ratingAPI) getMenuScore(w http.ResponseWriter, r *http.Request) {
-    id, err := strconv.Atoi(mux.Vars(r)["id"])
-    m, err := t.ratingRepo.GetMenuScore(uint32(id))
-    if err != nil {
-        w.WriteHeader(http.StatusNotFound)
-        return
-    }
-    w.Header().Add("Content-Type", "application/json")
-    if err := json.NewEncoder(w).Encode(m); err != nil {
-        fmt.Println(err)
-        w.WriteHeader(http.StatusInternalServerError)
-    }
+	id, err := strconv.Atoi(mux.Vars(r)["id"])
+	m, err := t.ratingRepo.GetMenuScore(uint32(id))
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+	w.Header().Add("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(m); err != nil {
+		fmt.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+	}
 }

@@ -19,13 +19,14 @@ type MenuType struct {
 	Description string `json:"description"`
 }
 
+// MenuComp :nodoc:
 type MenuComp struct {
-	MenuID      uint32  `json:"menu_id"`
-	Name        string  `json:"menu_name"`
-	Price       float32 `json:"price"`
-	MenuType  MenuType  `json:"menu_type"`
-	Ingredients string  `json:"ingredients"`
-	MenuStatus  bool    `json:"menu_status"`
+	MenuID      uint32   `json:"menu_id"`
+	Name        string   `json:"menu_name"`
+	Price       float32  `json:"price"`
+	MenuType    MenuType `json:"menu_type"`
+	Ingredients string   `json:"ingredients"`
+	MenuStatus  bool     `json:"menu_status"`
 }
 
 // MenuRepository nn
@@ -48,6 +49,7 @@ type MenuTypeRepository interface {
 	BulkInsert(ctx context.Context, MenuType []MenuType) error
 }
 
+// MenuUsecase :nododc:
 type MenuUsecase interface {
 	GetAll() (res []MenuComp, err error)
 	CreateMenu(ctx context.Context, order *Menu) (id uint32, err error)

@@ -22,7 +22,9 @@ func NewOrderUsecase(
 	}
 }
 
-func (u *orderUsecase) GetOrderWithDetails(orderID uint32) (res models.OrderWithDetails, err error) {
+func (u *orderUsecase) GetOrderWithDetails(
+	orderID uint32,
+) (res models.OrderWithDetails, err error) {
 	order, err := u.orderRepo.GetByID(orderID)
 	if err != nil {
 		return
@@ -49,6 +51,11 @@ func (u *orderUsecase) GetOrderByID(orderID uint32) (res *models.Order, err erro
 	return
 }
 
+func (u *orderUsecase) GetOrderDetailByID(orderDetailID uint32) (res *models.OrderDetails, err error) {
+	res, err = u.orderDetailsRepo.GetByID(orderDetailID)
+	return
+}
+
 func (u *orderUsecase) GetOrdersByCustID(customerID uint32) (res []models.Order, err error) {
 	res, err = u.orderRepo.GetByCustID(customerID)
 	return
@@ -62,7 +69,9 @@ func (u *orderUsecase) GetOrdersHistoryByCustID(customerID uint32) (res []models
 	return
 }
 
-func (u *orderUsecase) GetOngoingOrdersyByCustID(customerID uint32) (res []models.Order, err error) {
+func (u *orderUsecase) GetOngoingOrdersyByCustID(
+	customerID uint32,
+) (res []models.Order, err error) {
 	res, err = u.orderRepo.GetByStatusAndCustID(
 		int32(0),
 		customerID,
@@ -70,7 +79,10 @@ func (u *orderUsecase) GetOngoingOrdersyByCustID(customerID uint32) (res []model
 	return
 }
 
-func (u *orderUsecase) CreateOrder(ctx context.Context, order *models.Order) (id uint32, err error) {
+func (u *orderUsecase) CreateOrder(
+	ctx context.Context,
+	order *models.Order,
+) (id uint32, err error) {
 	id, err = u.CreateOrder(
 		ctx,
 		order,
@@ -96,6 +108,57 @@ func (u *orderUsecase) UpdateOrder(ctx context.Context, orderID uint32, order *m
 		orderID,
 		order,
 	)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (u *orderUsecase) CreateOrderDetail(
+	ctx context.Context,
+	orderD *models.OrderDetails,
+) error {
+	err := u.orderDetailsRepo.Store(
+		ctx,
+		orderD,
+	)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (u *orderUsecase) UpdateOrderPrice(ctx context.Context, orderID uint32) error {
+	err := u.orderRepo.UpdateTotalPrice(ctx, orderID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (u *orderUsecase) UpdateOrderDetailPrice(ctx context.Context, orderDetailID uint32) error {
+	err := u.orderDetailsRepo.UpdateTotalPrice(ctx, orderDetailID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (u *orderUsecase) DeleteOrder(ctx context.Context, orderID uint32) error {
+	err := u.orderRepo.DeleteByID(ctx, orderID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (u *orderUsecase) DeleteOrderDetail(ctx context.Context, orderDetailID uint32) error {
+	err := u.orderDetailsRepo.DeleteByID(ctx, orderDetailID)
 	if err != nil {
 		return err
 	}

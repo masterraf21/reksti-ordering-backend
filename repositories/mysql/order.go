@@ -3,6 +3,7 @@ package mysql
 import (
 	"context"
 	"database/sql"
+	"time"
 
 	logger "github.com/sirupsen/logrus"
 
@@ -333,6 +334,9 @@ func (r *orderRepo) Store(
 	ord *models.Order,
 ) (orderID uint32, err error) {
 	table := "orders"
+	now := time.Now()
+	nowString := now.String()
+
 	query := sq.Insert(table).
 		Columns(
 			"customer_id",
@@ -342,7 +346,7 @@ func (r *orderRepo) Store(
 		).
 		Values(
 			ord.CustomerID,
-			ord.OrderDate,
+			nowString,
 			ord.TotalPrice,
 			ord.OrderStatus,
 		).
@@ -371,6 +375,9 @@ func (r *orderRepo) BulkInsert(
 	orders []models.Order,
 ) error {
 	table := "orders"
+	now := time.Now()
+	nowString := now.String()
+
 	tx, err := r.Writer.BeginTx(ctx, nil)
 	if err != nil {
 		return err
@@ -387,7 +394,7 @@ func (r *orderRepo) BulkInsert(
 			).
 			Values(
 				ord.CustomerID,
-				ord.OrderDate,
+				nowString,
 				ord.TotalPrice,
 				ord.OrderStatus,
 			).

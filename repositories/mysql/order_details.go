@@ -249,7 +249,7 @@ func (r *orderDetailsRepo) DeleteByID(ctx context.Context, orderDetailsID uint32
 func (r *orderDetailsRepo) Store(
 	ctx context.Context,
 	ord *models.OrderDetails,
-) (orderDetailsID uint32, err error) {
+) error {
 	table := "order_details"
 	query := sq.Insert(table).
 		Columns(
@@ -267,22 +267,16 @@ func (r *orderDetailsRepo) Store(
 		PlaceholderFormat(sq.Question)
 
 	sqlInsert, argsInsert, err := query.ToSql()
-	res, err := r.Writer.ExecContext(
+	_, err = r.Writer.ExecContext(
 		ctx,
 		sqlInsert,
 		argsInsert...,
 	)
 	if err != nil {
-		return
+		return err
 	}
 
-	id, err := res.LastInsertId()
-	if err != nil {
-		return
-	}
-	orderDetailsID = uint32(id)
-
-	return
+	return nil
 }
 
 func (r *orderDetailsRepo) BulkInsert(

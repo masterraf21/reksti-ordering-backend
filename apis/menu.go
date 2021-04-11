@@ -1,11 +1,12 @@
 package apis
 
 import (
-	"net/http"
 	"context"
 	"encoding/json"
-	"strconv"
 	"fmt"
+	"net/http"
+	"strconv"
+
 	"github.com/gorilla/mux"
 	"github.com/masterraf21/reksti-ordering-backend/models"
 	httpUtils "github.com/masterraf21/reksti-ordering-backend/utils/http"
@@ -15,7 +16,7 @@ type menuAPI struct {
 	menuUsecase models.MenuUsecase
 }
 
-// NewOrderAPI will initiate menu API
+// NewMenuAPI will initiate menu API
 func NewMenuAPI(r *mux.Router, mu models.MenuUsecase) {
 	menuAPI := &menuAPI{
 		menuUsecase: mu,
@@ -76,32 +77,32 @@ func (t *menuAPI) createMenu(w http.ResponseWriter, r *http.Request) {
 }
 
 func (t *menuAPI) deleteMenu(w http.ResponseWriter, r *http.Request) {
-    id, err := strconv.Atoi(mux.Vars(r)["id"])
+	id, err := strconv.Atoi(mux.Vars(r)["id"])
 	res, err := t.menuUsecase.DeleteMenu(context.Background(), uint32(id))
 	if err != nil {
 		fmt.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-    w.Header().Add("Content-Type", "application/json")
-    if err := json.NewEncoder(w).Encode(res); err != nil {
-        fmt.Println(err)
-        w.WriteHeader(http.StatusInternalServerError)
-    }
+	w.Header().Add("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(res); err != nil {
+		fmt.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+	}
 }
 
 func (t *menuAPI) getByID(w http.ResponseWriter, r *http.Request) {
-    id, err := strconv.Atoi(mux.Vars(r)["id"])
-    res, err := t.menuUsecase.GetByID(uint32(id))
-    if err != nil {
-        w.WriteHeader(http.StatusNotFound)
-        return
-    }
-    w.Header().Add("Content-Type", "application/json")
-    if err := json.NewEncoder(w).Encode(res); err != nil {
-        fmt.Println(err)
-        w.WriteHeader(http.StatusInternalServerError)
-    }
+	id, err := strconv.Atoi(mux.Vars(r)["id"])
+	res, err := t.menuUsecase.GetByID(uint32(id))
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+	w.Header().Add("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(res); err != nil {
+		fmt.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+	}
 }
 
 func (t *menuAPI) getAllType(w http.ResponseWriter, r *http.Request) {
@@ -150,16 +151,16 @@ func (t *menuAPI) createType(w http.ResponseWriter, r *http.Request) {
 }
 
 func (t *menuAPI) deleteType(w http.ResponseWriter, r *http.Request) {
-    id, err := strconv.Atoi(mux.Vars(r)["id"])
-    m, err := t.menuUsecase.DeleteType(context.Background(), uint32(id))
+	id, err := strconv.Atoi(mux.Vars(r)["id"])
+	m, err := t.menuUsecase.DeleteType(context.Background(), uint32(id))
 	if err != nil {
 		fmt.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-    w.Header().Add("Content-Type", "application/json")
-    if err := json.NewEncoder(w).Encode(m); err != nil {
-        fmt.Println(err)
-        w.WriteHeader(http.StatusInternalServerError)
-    }
+	w.Header().Add("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(m); err != nil {
+		fmt.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+	}
 }

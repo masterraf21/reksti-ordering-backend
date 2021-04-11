@@ -7,23 +7,23 @@ import (
 )
 
 type menuUsecase struct {
-	menuRepo        models.MenuRepository
+	menuRepo     models.MenuRepository
 	menuTypeRepo models.MenuTypeRepository
 }
 
-// NewOrderUsecase will create new order usecase
+// NewMenuUsecase will create new order usecase
 func NewMenuUsecase(
 	muc models.MenuRepository,
 	mtc models.MenuTypeRepository,
 ) models.MenuUsecase {
 	return &menuUsecase{
-		menuRepo:       muc,
-		menuTypeRepo: 	mtc,
+		menuRepo:     muc,
+		menuTypeRepo: mtc,
 	}
 }
 
-func (u *menuUsecase) GetAll() (res []models.MenuComp, err error) {
-	menuRAW, err := u.menuRepo.GetAll()
+func (t *menuUsecase) GetAll() (res []models.MenuComp, err error) {
+	menuRAW, err := t.menuRepo.GetAll()
 	if err != nil {
 		return
 	}
@@ -34,7 +34,7 @@ func (u *menuUsecase) GetAll() (res []models.MenuComp, err error) {
 		res[i].Name = m.Name
 		res[i].Price = m.Price
 		var typeTemp *models.MenuType
-		typeTemp, err = u.menuTypeRepo.GetByID(m.MenuTypeID)
+		typeTemp, err = t.menuTypeRepo.GetByID(m.MenuTypeID)
 		if err != nil {
 			return
 		}
@@ -45,8 +45,8 @@ func (u *menuUsecase) GetAll() (res []models.MenuComp, err error) {
 	return
 }
 
-func (u *menuUsecase) CreateMenu(ctx context.Context, order *models.Menu) (id uint32, err error) {
-	id, err = u.menuRepo.Store(ctx, order)
+func (t *menuUsecase) CreateMenu(ctx context.Context, order *models.Menu) (id uint32, err error) {
+	id, err = t.menuRepo.Store(ctx, order)
 	return
 }
 
@@ -71,10 +71,10 @@ func (t *menuUsecase) DeleteMenu(ctx context.Context, id uint32) (res models.Men
 }
 
 func (t *menuUsecase) GetByID(id uint32) (res models.MenuComp, err error) {
-    m, err := t.menuRepo.GetByID(id)
-    if err != nil {
-        return
-    }
+	m, err := t.menuRepo.GetByID(id)
+	if err != nil {
+		return
+	}
 	res.MenuID = m.MenuID
 	res.Name = m.Name
 	res.Price = m.Price
@@ -99,7 +99,7 @@ func (t *menuUsecase) CreateType(ctx context.Context, m *models.MenuType) (id ui
 }
 
 func (t *menuUsecase) DeleteType(ctx context.Context, id uint32) (res *models.MenuType, err error) {
-    res, err = t.menuTypeRepo.GetByID(id)
+	res, err = t.menuTypeRepo.GetByID(id)
 	if err != nil {
 		return
 	}
