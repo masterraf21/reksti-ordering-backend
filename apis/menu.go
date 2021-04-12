@@ -3,6 +3,7 @@ package apis
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -56,7 +57,7 @@ func (t *menuAPI) createMenu(w http.ResponseWriter, r *http.Request) {
 	m := models.Menu{}
 	json.NewDecoder(r.Body).Decode(&m)
 	if m.Name == "" {
-		w.WriteHeader(http.StatusBadRequest)
+		httpUtils.HandleError(w, r, errors.New("No Name provided"), "please provide name", http.StatusBadRequest)
 		return
 	}
 	id, err := t.menuUsecase.CreateMenu(context.Background(), &m)
@@ -93,16 +94,19 @@ func (t *menuAPI) deleteMenu(w http.ResponseWriter, r *http.Request) {
 
 func (t *menuAPI) getByID(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(mux.Vars(r)["id"])
+	if err != nil {
+		httpUtils.HandleError(w, r, err, "id not integer", http.StatusBadRequest)
+	}
 	res, err := t.menuUsecase.GetByID(uint32(id))
 	if err != nil {
-		w.WriteHeader(http.StatusNotFound)
-		return
+		httpUtils.HandleError(w, r, err, "failed to get menu by id", http.StatusInternalServerError)
 	}
-	w.Header().Add("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(res); err != nil {
-		fmt.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
+
+	var data struct {
+		Data *models.MenuComp `json:"data"`
 	}
+	data.Data = res
+	httpUtils.HandleJSONResponse(w, r, data)
 }
 
 func (t *menuAPI) getAllType(w http.ResponseWriter, r *http.Request) {

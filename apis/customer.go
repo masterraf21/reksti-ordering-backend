@@ -24,7 +24,7 @@ func NewCustomerAPI(r *mux.Router, cuc models.CustomerUsecase) {
 	r.HandleFunc("/customer", customerAPI.GetAll).Methods("GET")
 	r.HandleFunc("/customer", customerAPI.Create).Methods("POST")
 	r.HandleFunc("/customer/{id_customer}", customerAPI.GetByID).Methods("GET")
-	r.HandleFunc("/customer/{id_customer", customerAPI.DeleteByID).Methods("DELETE")
+	r.HandleFunc("/customer/{id_customer}", customerAPI.DeleteByID).Methods("DELETE")
 }
 
 func (c *customerAPI) GetAll(w http.ResponseWriter, r *http.Request) {

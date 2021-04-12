@@ -22,9 +22,9 @@ func NewPaymentAPI(r *mux.Router, pac models.PaymentUsecase) {
 	}
 
 	r.HandleFunc("/payment", paymentAPI.GetAll).Methods("GET")
-	r.HandleFunc("/payment", paymentAPI.GetAll).Methods("POST")
+	r.HandleFunc("/payment", paymentAPI.Create).Methods("POST")
 	r.HandleFunc("/payment/{id_payment}", paymentAPI.GetAll).Methods("GET")
-	r.HandleFunc("/payment/{id_payment}", paymentAPI.GetAll).Methods("DELETE")
+	r.HandleFunc("/payment/{id_payment}", paymentAPI.DeleteByID).Methods("DELETE")
 }
 
 func (p *paymentAPI) GetAll(w http.ResponseWriter, r *http.Request) {
@@ -116,7 +116,7 @@ func (p *paymentAPI) Create(w http.ResponseWriter, r *http.Request) {
 	var body struct {
 		OrderID     uint32  `json:"order_id"`
 		Amount      float32 `json:"amount"`
-		PaymentType string  `json:"paymeny_type"`
+		PaymentType string  `json:"payment_type"`
 	}
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
 		httpUtils.HandleError(w, r, err, "bad request body", http.StatusBadRequest)
@@ -136,7 +136,7 @@ func (p *paymentAPI) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var response struct {
-		PaymentID uint32 `json:"customer_id"`
+		PaymentID uint32 `json:"payment_id"`
 	}
 	response.PaymentID = id
 

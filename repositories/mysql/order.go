@@ -138,7 +138,7 @@ func (r *orderRepo) UpdateOrderStatus(
 }
 
 func (r *orderRepo) GetByStatusAndCustID(
-	status int32,
+	status []int32,
 	custID uint32,
 ) (res []models.Order, err error) {
 	table := "orders"

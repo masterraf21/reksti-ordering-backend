@@ -54,7 +54,7 @@ type MenuUsecase interface {
 	GetAll() (res []MenuComp, err error)
 	CreateMenu(ctx context.Context, order *Menu) (id uint32, err error)
 	DeleteMenu(ctx context.Context, id uint32) (res MenuComp, err error)
-	GetByID(id uint32) (res MenuComp, err error)
+	GetByID(id uint32) (res *MenuComp, err error)
 	GetAllType() (res []MenuType, err error)
 	CreateType(ctx context.Context, m *MenuType) (id uint32, err error)
 	DeleteType(ctx context.Context, id uint32) (res *MenuType, err error)

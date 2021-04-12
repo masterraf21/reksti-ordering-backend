@@ -63,7 +63,7 @@ func (u *orderUsecase) GetOrdersByCustID(customerID uint32) (res []models.Order,
 
 func (u *orderUsecase) GetOrdersHistoryByCustID(customerID uint32) (res []models.Order, err error) {
 	res, err = u.orderRepo.GetByStatusAndCustID(
-		int32(2),
+		[]int32{1, 2},
 		customerID,
 	)
 	return
@@ -73,7 +73,7 @@ func (u *orderUsecase) GetOngoingOrdersyByCustID(
 	customerID uint32,
 ) (res []models.Order, err error) {
 	res, err = u.orderRepo.GetByStatusAndCustID(
-		int32(0),
+		[]int32{0},
 		customerID,
 	)
 	return
@@ -83,10 +83,7 @@ func (u *orderUsecase) CreateOrder(
 	ctx context.Context,
 	order *models.Order,
 ) (id uint32, err error) {
-	id, err = u.CreateOrder(
-		ctx,
-		order,
-	)
+	id, err = u.orderRepo.Store(ctx, order)
 	return
 }
 

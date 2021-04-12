@@ -1,8 +1,13 @@
 .PHONY: mock test
+include .env
 
 # run: test-api test-service
 run:
 	./cmds/env .env go run main.go
+
+dev: 
+	./cmds/env .env
+	gin --appPort ${PORT} --all -i main.go
 
 test:
 	go get -u github.com/kyoh86/richgo

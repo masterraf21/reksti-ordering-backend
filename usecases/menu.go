@@ -70,21 +70,31 @@ func (t *menuUsecase) DeleteMenu(ctx context.Context, id uint32) (res models.Men
 	return
 }
 
-func (t *menuUsecase) GetByID(id uint32) (res models.MenuComp, err error) {
+func (t *menuUsecase) GetByID(id uint32) (res *models.MenuComp, err error) {
 	m, err := t.menuRepo.GetByID(id)
 	if err != nil {
 		return
 	}
-	res.MenuID = m.MenuID
-	res.Name = m.Name
-	res.Price = m.Price
+
+	if m == nil {
+		return
+	}
+
 	typeTemp, err := t.menuTypeRepo.GetByID(m.MenuTypeID)
 	if err != nil {
 		return
 	}
-	res.MenuType = *typeTemp
-	res.Ingredients = m.Ingredients
-	res.MenuStatus = m.MenuStatus
+	menuComp := models.MenuComp{
+		MenuID:      m.MenuID,
+		Name:        m.Name,
+		Price:       m.Price,
+		MenuType:    *typeTemp,
+		Ingredients: m.Ingredients,
+		MenuStatus:  m.MenuStatus,
+	}
+
+	res = &menuComp
+
 	return
 }
 

@@ -8,7 +8,7 @@ type Order struct {
 	CustomerID  uint32  `json:"customer_id"`
 	OrderDate   string  `json:"order_date"`
 	TotalPrice  float32 `json:"total_price"`
-	OrderStatus int32   `json:"order_status,omitempty"` // 0:pending, 1:completed, 2:cancelled
+	OrderStatus int32   `json:"order_status,"` // 0:pending, 1:completed, 2:cancelled
 }
 
 // OrderDetails represent order_details data
@@ -28,7 +28,7 @@ type OrderWithDetails struct {
 
 // OrderRepository represents repo object for order
 type OrderRepository interface {
-	GetByStatusAndCustID(status int32, custID uint32) ([]Order, error)
+	GetByStatusAndCustID(status []int32, custID uint32) ([]Order, error)
 	GetByCustID(custID uint32) ([]Order, error)
 	GetOrderDetailsByOrderID(orderID uint32) ([]OrderDetails, error)
 	GetAll() ([]Order, error)

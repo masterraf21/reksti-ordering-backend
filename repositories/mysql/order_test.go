@@ -199,7 +199,7 @@ func (s *orderRepoTestSuite) TestGet() {
 		s.Require().NoError(err)
 		s.Assert().NotEmpty(id)
 
-		results, err := s.Repo.GetByStatusAndCustID(order.OrderStatus, s.CustomerID)
+		results, err := s.Repo.GetByStatusAndCustID([]int32{order.OrderStatus}, s.CustomerID)
 		result := results[0]
 		if err != nil {
 			panic(err)

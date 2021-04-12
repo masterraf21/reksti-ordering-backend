@@ -115,11 +115,12 @@ func (t *ratingAPI) getByMenu(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
-	w.Header().Add("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(m); err != nil {
-		fmt.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
+
+	var data struct {
+		Data []models.Rating `json:"data"`
 	}
+	data.Data = m
+	httpUtils.HandleJSONResponse(w, r, data)
 }
 
 func (t *ratingAPI) getMenuScore(w http.ResponseWriter, r *http.Request) {
@@ -129,9 +130,13 @@ func (t *ratingAPI) getMenuScore(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
-	w.Header().Add("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(m); err != nil {
-		fmt.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
+
+	type Score struct {
+		Score float32 `json:"score"`
 	}
+	var data struct {
+		Data Score `json:"data"`
+	}
+	data.Data = Score{Score: m}
+	httpUtils.HandleJSONResponse(w, r, data)
 }
