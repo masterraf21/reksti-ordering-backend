@@ -15,7 +15,7 @@ type menuTypeRepo struct {
 	Writer *sql.DB
 }
 
-// NewOrderDetailsRepo create new order repo
+// NewMenuTypeRepo create new order repo
 func NewMenuTypeRepo(reader, writer *sql.DB) models.MenuTypeRepository {
 	return &menuTypeRepo{
 		Reader: reader,
@@ -121,8 +121,8 @@ func (r *menuTypeRepo) UpdateByID(
 			"menu_type_id": menuTypeID,
 		}).
 		SetMap(map[string]interface{}{
-			"type_name":    order.TypeName,
-			"description":     order.Description,
+			"type_name":   order.TypeName,
+			"description": order.Description,
 		}).
 		RunWith(r.Writer).
 		PlaceholderFormat(sq.Question)

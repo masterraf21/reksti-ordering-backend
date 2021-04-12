@@ -49,13 +49,41 @@ func (_m *OrderUsecase) CreateOrder(ctx context.Context, order *models.Order) (u
 	return r0, r1
 }
 
-// CreateOrderDetail provides a mock function with given fields: ctx, orderID, orderD
-func (_m *OrderUsecase) CreateOrderDetail(ctx context.Context, orderID uint32, orderD *models.OrderDetails) error {
-	ret := _m.Called(ctx, orderID, orderD)
+// CreateOrderDetail provides a mock function with given fields: ctx, orderD
+func (_m *OrderUsecase) CreateOrderDetail(ctx context.Context, orderD *models.OrderDetails) error {
+	ret := _m.Called(ctx, orderD)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, uint32, *models.OrderDetails) error); ok {
-		r0 = rf(ctx, orderID, orderD)
+	if rf, ok := ret.Get(0).(func(context.Context, *models.OrderDetails) error); ok {
+		r0 = rf(ctx, orderD)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// DeleteOrder provides a mock function with given fields: ctx, orderID
+func (_m *OrderUsecase) DeleteOrder(ctx context.Context, orderID uint32) error {
+	ret := _m.Called(ctx, orderID)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, uint32) error); ok {
+		r0 = rf(ctx, orderID)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// DeleteOrderDetail provides a mock function with given fields: ctx, orderDetailID
+func (_m *OrderUsecase) DeleteOrderDetail(ctx context.Context, orderDetailID uint32) error {
+	ret := _m.Called(ctx, orderDetailID)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, uint32) error); ok {
+		r0 = rf(ctx, orderDetailID)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -119,6 +147,29 @@ func (_m *OrderUsecase) GetOrderByID(orderID uint32) (*models.Order, error) {
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*models.Order)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(uint32) error); ok {
+		r1 = rf(orderID)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// GetOrderDetailByID provides a mock function with given fields: orderID
+func (_m *OrderUsecase) GetOrderDetailByID(orderID uint32) (*models.OrderDetails, error) {
+	ret := _m.Called(orderID)
+
+	var r0 *models.OrderDetails
+	if rf, ok := ret.Get(0).(func(uint32) *models.OrderDetails); ok {
+		r0 = rf(orderID)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*models.OrderDetails)
 		}
 	}
 
@@ -206,6 +257,34 @@ func (_m *OrderUsecase) UpdateOrder(ctx context.Context, orderID uint32, order *
 	var r0 error
 	if rf, ok := ret.Get(0).(func(context.Context, uint32, *models.Order) error); ok {
 		r0 = rf(ctx, orderID, order)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// UpdateOrderDetailPrice provides a mock function with given fields: ctx, orderDetailID
+func (_m *OrderUsecase) UpdateOrderDetailPrice(ctx context.Context, orderDetailID uint32) error {
+	ret := _m.Called(ctx, orderDetailID)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, uint32) error); ok {
+		r0 = rf(ctx, orderDetailID)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// UpdateOrderPrice provides a mock function with given fields: ctx, orderID
+func (_m *OrderUsecase) UpdateOrderPrice(ctx context.Context, orderID uint32) error {
+	ret := _m.Called(ctx, orderID)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, uint32) error); ok {
+		r0 = rf(ctx, orderID)
 	} else {
 		r0 = ret.Error(0)
 	}

@@ -34,6 +34,7 @@ func NewOrderAPI(r *mux.Router, ouc models.OrderUsecase) {
 
 	r.HandleFunc("/order/{id_order}/price", orderAPI.updateOrderPrice).Methods("PUT")
 	r.HandleFunc("/order/detail/{id_order_detail}/price", orderAPI.updateOrderDetailPrice).Methods("PUT")
+	r.HandleFunc("/order/{id_order}/status", orderAPI.updateOrderStatus).Methods("PUT")
 
 	r.HandleFunc("/order/{id_order}", orderAPI.deleteOrderByID).Methods("DELETE")
 	r.HandleFunc("/order/detail/{id_order_detail}", orderAPI.deleteOrderDetailByID).Methods("DELETE")
@@ -273,6 +274,45 @@ func (t *orderAPI) updateOrderPrice(w http.ResponseWriter, r *http.Request) {
 			r,
 			err,
 			"failed to update order total price",
+			http.StatusInternalServerError,
+		)
+		return
+	}
+
+	httpUtils.HandleNoJSONResponse(w)
+}
+
+func (t *orderAPI) updateOrderStatus(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+
+	orderID, err := strconv.ParseInt(params["id_order"], 10, 64)
+	if err != nil {
+		httpUtils.HandleError(
+			w,
+			r,
+			err,
+			params["id_order"]+" is not integer",
+			http.StatusBadRequest,
+		)
+		return
+	}
+
+	var body struct {
+		OrderStatus int32 `json:"order_status"`
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		httpUtils.HandleError(w, r, err, "bad request body", http.StatusBadRequest)
+	}
+	defer r.Body.Close()
+
+	err = t.orderUsecase.UpdateOrderStatus(context.TODO(), uint32(orderID), body.OrderStatus)
+	if err != nil {
+		httpUtils.HandleError(
+			w,
+			r,
+			err,
+			"failed to update order status",
 			http.StatusInternalServerError,
 		)
 		return

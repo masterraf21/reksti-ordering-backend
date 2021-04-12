@@ -36,18 +36,20 @@ func (r *orderRepo) UpdateTotalPrice(
 
 	var totalPrice float32
 
-	for _, ord := range orderDetails {
-		totalPrice += ord.TotalPrice
-	}
+	if len(orderDetails) != 0 {
+		for _, ord := range orderDetails {
+			totalPrice += ord.TotalPrice
+		}
 
-	err = r.UpdateArbitrary(
-		ctx,
-		orderID,
-		"total_price",
-		totalPrice,
-	)
-	if err != nil {
-		return err
+		err = r.UpdateArbitrary(
+			ctx,
+			orderID,
+			"total_price",
+			totalPrice,
+		)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -335,7 +337,7 @@ func (r *orderRepo) Store(
 ) (orderID uint32, err error) {
 	table := "orders"
 	now := time.Now()
-	nowString := now.String()
+	nowInsert := now.Format(time.RFC3339)
 
 	query := sq.Insert(table).
 		Columns(
@@ -346,7 +348,7 @@ func (r *orderRepo) Store(
 		).
 		Values(
 			ord.CustomerID,
-			nowString,
+			nowInsert,
 			ord.TotalPrice,
 			ord.OrderStatus,
 		).
@@ -376,7 +378,7 @@ func (r *orderRepo) BulkInsert(
 ) error {
 	table := "orders"
 	now := time.Now()
-	nowString := now.String()
+	nowInsert := now.Format(time.RFC3339)
 
 	tx, err := r.Writer.BeginTx(ctx, nil)
 	if err != nil {
@@ -394,7 +396,7 @@ func (r *orderRepo) BulkInsert(
 			).
 			Values(
 				ord.CustomerID,
-				nowString,
+				nowInsert,
 				ord.TotalPrice,
 				ord.OrderStatus,
 			).

@@ -14,8 +14,15 @@ type Payment struct {
 // PaymentRepository pymnerepo
 type PaymentRepository interface {
 	GetAll() ([]Payment, error)
-	GetById(paymentID uint32) (*Payment, error)
-	Update(ctx context.Context, payment *Payment) error
-	DeleteById(paymentID uint32) error
-	Store(payment *Payment) error
+	GetByID(paymentID uint32) (*Payment, error)
+	DeleteByID(ctx context.Context, paymentID uint32) error
+	Store(ctx context.Context, payment *Payment) error
+}
+
+// PaymentUsecase for payment
+type PaymentUsecase interface {
+	GetAll() ([]Payment, error)
+	GetByID(paymentID uint32) (*Payment, error)
+	DeleteByID(ctx context.Context, paymentID uint32) error
+	CreatePayment(ctx context.Context, payment *Payment) error
 }

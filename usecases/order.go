@@ -165,3 +165,12 @@ func (u *orderUsecase) DeleteOrderDetail(ctx context.Context, orderDetailID uint
 
 	return nil
 }
+
+func (u *orderUsecase) UpdateOrderStatus(ctx context.Context, orderID uint32, status int32) error {
+	err := u.orderRepo.UpdateOrderStatus(ctx, orderID, status)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

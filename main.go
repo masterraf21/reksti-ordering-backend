@@ -76,23 +76,28 @@ func (s *Server) Start() {
 
 	orderRepo := repoMysql.NewOrderRepo(s.Reader, s.Writer)
 	orderDetailsRepo := repoMysql.NewOrderDetailsRepo(s.Reader, s.Writer)
-
 	orderUsecase := usecases.NewOrderUsecase(
 		orderRepo,
 		orderDetailsRepo,
 	)
 
-	apis.NewOrderAPI(r, orderUsecase)
-
 	menuRepo := repoMysql.NewMenuRepo(s.Reader, s.Writer)
 	menuTypeRepo := repoMysql.NewMenuTypeRepo(s.Reader, s.Writer)
 	menuUsecase := usecases.NewMenuUsecase(menuRepo, menuTypeRepo)
 
-	apis.NewMenuAPI(r, menuUsecase)
-
 	ratingRepo := repoMysql.NewRatingRepo(s.Reader, s.Writer)
 
+	customerRepo := repoMysql.NewCustomerRepo(s.Reader, s.Writer)
+	customerUsecase := usecases.NewCustomerUsecase(customerRepo)
+
+	paymentRepo := repoMysql.NewPaymentRepo(s.Reader, s.Writer)
+	paymentUsecase := usecases.NewPaymentUsecase(paymentRepo)
+
+	apis.NewOrderAPI(r, orderUsecase)
+	apis.NewMenuAPI(r, menuUsecase)
 	apis.NewRatingAPI(r, ratingRepo)
+	apis.NewCustomerAPI(r, customerUsecase)
+	apis.NewPaymentAPI(r, paymentUsecase)
 
 	srv := &http.Server{
 		Handler:      r,

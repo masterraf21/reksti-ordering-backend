@@ -112,24 +112,17 @@ func (_m *OrderDetailsRepository) GetOrderDetailsByOrderID(orderID uint32) ([]mo
 }
 
 // Store provides a mock function with given fields: ctx, ord
-func (_m *OrderDetailsRepository) Store(ctx context.Context, ord *models.OrderDetails) (uint32, error) {
+func (_m *OrderDetailsRepository) Store(ctx context.Context, ord *models.OrderDetails) error {
 	ret := _m.Called(ctx, ord)
 
-	var r0 uint32
-	if rf, ok := ret.Get(0).(func(context.Context, *models.OrderDetails) uint32); ok {
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, *models.OrderDetails) error); ok {
 		r0 = rf(ctx, ord)
 	} else {
-		r0 = ret.Get(0).(uint32)
+		r0 = ret.Error(0)
 	}
 
-	var r1 error
-	if rf, ok := ret.Get(1).(func(context.Context, *models.OrderDetails) error); ok {
-		r1 = rf(ctx, ord)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
+	return r0
 }
 
 // UpdateArbitrary provides a mock function with given fields: ctx, orderDetailsID, columnName, value

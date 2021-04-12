@@ -79,6 +79,7 @@ type OrderUsecase interface {
 	UpdateOrder(ctx context.Context, orderID uint32, order *Order) error
 	UpdateOrderPrice(ctx context.Context, orderID uint32) error
 	UpdateOrderDetailPrice(ctx context.Context, orderDetailID uint32) error
+	UpdateOrderStatus(ctx context.Context, orderID uint32, status int32) error
 	CreateOrderDetail(ctx context.Context, orderD *OrderDetails) error
 	DeleteOrder(ctx context.Context, orderID uint32) error
 	DeleteOrderDetail(ctx context.Context, orderDetailID uint32) error

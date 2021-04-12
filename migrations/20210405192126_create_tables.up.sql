@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS customer (
   `customer_phone_number` varchar(15) NOT NULL,
   `customer_username` varchar(30) NOT NULL,
   `customer_password` varchar(30) NOT NULL,
-  `account_status` int(1) NOT NULL,
+  `account_status` int(1) NOT NULL DEFAULT 1,
   PRIMARY KEY (`customer_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 

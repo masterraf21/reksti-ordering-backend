@@ -9,15 +9,22 @@ type Customer struct {
 	Email         string `json:"customer_email"`
 	PhoneNumber   string `json:"customer_phone_numer"`
 	Username      string `json:"customer_username"`
-	Password      string `json:"password"`
+	Password      string `json:"customer_password"`
 	AccountStatus bool   `json:"account_status"`
 }
 
 // CustomerRepository for repo
 type CustomerRepository interface {
 	GetAll() ([]Customer, error)
-	GetById(CustomerID uint32) (*Customer, error)
-	UpdateById(ctx context.Context, CustomerID uint32) error
-	DeleteById(ctx context.Context, CustomerID uint32) error
+	GetByID(CustomerID uint32) (*Customer, error)
+	DeleteByID(ctx context.Context, CustomerID uint32) error
 	Store(ctx context.Context, cust *Customer) error
+}
+
+// CustomerUsecase for usecase
+type CustomerUsecase interface {
+	GetAll() ([]Customer, error)
+	GetByID(CustomerID uint32) (*Customer, error)
+	DeleteByID(ctx context.Context, CustomerID uint32) error
+	CreateCustomer(ctx context.Context, cust *Customer) error
 }
