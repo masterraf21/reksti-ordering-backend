@@ -11,11 +11,11 @@ import (
 
 type paymentRepoTestSuite struct {
 	suite.Suite
-	Reader       *sql.DB
-	Writer       *sql.DB
-	Repo         models.PaymentRepository
-	OrderRepo    models.OrderRepository
-	CustomerRepo models.CustomerRepository
+	Reader     *sql.DB
+	Writer     *sql.DB
+	Repo       models.PaymentRepository
+	OrderID    uint32
+	CustomerID uint32
 }
 
 func TestPaymentRepository(t *testing.T) {
@@ -27,8 +27,32 @@ func (s *paymentRepoTestSuite) SetupSuite() {
 	s.Reader = reader
 	s.Writer = writer
 	s.Repo = NewPaymentRepo(reader, writer)
-	s.OrderRepo = NewOrderRepo(reader, writer)
-	s.CustomerRepo = NewCustomerRepo(reader, writer)
+	orderRepo := NewOrderRepo(reader, writer)
+	customerRepo := NewCustomerRepo(reader, writer)
+
+	cust := models.Customer{
+		FullName:    "name test",
+		Email:       "email test",
+		PhoneNumber: "081xxxxxx",
+		Username:    "ohayo poko",
+		Password:    "return_to_monke",
+	}
+	custID, err := customerRepo.Store(context.TODO(), &cust)
+	if err != nil {
+		panic(err)
+	}
+	s.CustomerID = custID
+
+	order := models.Order{
+		CustomerID:  custID,
+		TotalPrice:  0,
+		OrderStatus: 0,
+	}
+	orderID, err := orderRepo.Store(context.TODO(), &order)
+	if err != nil {
+		panic(err)
+	}
+	s.OrderID = orderID
 }
 
 func (s *paymentRepoTestSuite) TearDownSuite() {
@@ -53,8 +77,6 @@ func (s *paymentRepoTestSuite) TearDownSuite() {
 func (s *paymentRepoTestSuite) TearDownTest() {
 	querys := []string{
 		"DELETE FROM payment;",
-		"DELETE FROM orders;",
-		"DELETE FROM customer;",
 	}
 
 	var err error
@@ -71,32 +93,8 @@ func (s *paymentRepoTestSuite) TearDownTest() {
 
 func (s *paymentRepoTestSuite) TestStore() {
 	s.Run("Store Payment", func() {
-		cust := models.Customer{
-			FullName:    "name test",
-			Email:       "email test",
-			PhoneNumber: "081xxxxxx",
-			Username:    "ohayo poko",
-			Password:    "return_to_monke",
-		}
-		custID, err := s.CustomerRepo.Store(context.TODO(), &cust)
-		if err != nil {
-			panic(err)
-		}
-		s.Require().NoError(err)
-
-		order := models.Order{
-			CustomerID:  custID,
-			TotalPrice:  0,
-			OrderStatus: 0,
-		}
-		orderID, err := s.OrderRepo.Store(context.TODO(), &order)
-		if err != nil {
-			panic(err)
-		}
-		s.Require().NoError(err)
-
 		payment := models.Payment{
-			OrderID:     orderID,
+			OrderID:     s.OrderID,
 			Amount:      10000,
 			PaymentType: "GoPay",
 		}
@@ -122,32 +120,8 @@ func (s *paymentRepoTestSuite) TestStore() {
 
 func (s *paymentRepoTestSuite) TestGet() {
 	s.Run("Get All Payment", func() {
-		cust := models.Customer{
-			FullName:    "name test",
-			Email:       "email test",
-			PhoneNumber: "081xxxxxx",
-			Username:    "ohayo poko",
-			Password:    "return_to_monke",
-		}
-		custID, err := s.CustomerRepo.Store(context.TODO(), &cust)
-		if err != nil {
-			panic(err)
-		}
-		s.Require().NoError(err)
-
-		order := models.Order{
-			CustomerID:  custID,
-			TotalPrice:  0,
-			OrderStatus: 0,
-		}
-		orderID, err := s.OrderRepo.Store(context.TODO(), &order)
-		if err != nil {
-			panic(err)
-		}
-		s.Require().NoError(err)
-
 		payment := models.Payment{
-			OrderID:     orderID,
+			OrderID:     s.OrderID,
 			Amount:      10000,
 			PaymentType: "GoPay",
 		}
@@ -172,32 +146,8 @@ func (s *paymentRepoTestSuite) TestGet() {
 
 func (s *paymentRepoTestSuite) TestGet2() {
 	s.Run("Get Payment By ID", func() {
-		cust := models.Customer{
-			FullName:    "name test",
-			Email:       "email test",
-			PhoneNumber: "081xxxxxx",
-			Username:    "ohayo poko",
-			Password:    "return_to_monke",
-		}
-		custID, err := s.CustomerRepo.Store(context.TODO(), &cust)
-		if err != nil {
-			panic(err)
-		}
-		s.Require().NoError(err)
-
-		order := models.Order{
-			CustomerID:  custID,
-			TotalPrice:  0,
-			OrderStatus: 0,
-		}
-		orderID, err := s.OrderRepo.Store(context.TODO(), &order)
-		if err != nil {
-			panic(err)
-		}
-		s.Require().NoError(err)
-
 		payment := models.Payment{
-			OrderID:     orderID,
+			OrderID:     s.OrderID,
 			Amount:      10000,
 			PaymentType: "GoPay",
 		}
@@ -223,32 +173,8 @@ func (s *paymentRepoTestSuite) TestGet2() {
 
 func (s *paymentRepoTestSuite) TestDelete() {
 	s.Run("Delete Payment By ID", func() {
-		cust := models.Customer{
-			FullName:    "name test",
-			Email:       "email test",
-			PhoneNumber: "081xxxxxx",
-			Username:    "ohayo poko",
-			Password:    "return_to_monke",
-		}
-		custID, err := s.CustomerRepo.Store(context.TODO(), &cust)
-		if err != nil {
-			panic(err)
-		}
-		s.Require().NoError(err)
-
-		order := models.Order{
-			CustomerID:  custID,
-			TotalPrice:  0,
-			OrderStatus: 0,
-		}
-		orderID, err := s.OrderRepo.Store(context.TODO(), &order)
-		if err != nil {
-			panic(err)
-		}
-		s.Require().NoError(err)
-
 		payment := models.Payment{
-			OrderID:     orderID,
+			OrderID:     s.OrderID,
 			Amount:      10000,
 			PaymentType: "GoPay",
 		}

@@ -61,7 +61,7 @@ type OrderDetailsRepository interface {
 		value interface{},
 	) error
 	DeleteByID(ctx context.Context, orderDetailsID uint32) error
-	Store(ctx context.Context, ord *OrderDetails) error
+	Store(ctx context.Context, ord *OrderDetails) (uint32, error)
 	BulkInsert(ctx context.Context, orderdetails []OrderDetails) error
 }
 
@@ -80,7 +80,7 @@ type OrderUsecase interface {
 	UpdateOrderPrice(ctx context.Context, orderID uint32) error
 	UpdateOrderDetailPrice(ctx context.Context, orderDetailID uint32) error
 	UpdateOrderStatus(ctx context.Context, orderID uint32, status int32) error
-	CreateOrderDetail(ctx context.Context, orderD *OrderDetails) error
+	CreateOrderDetail(ctx context.Context, orderD *OrderDetails) (uint32, error)
 	DeleteOrder(ctx context.Context, orderID uint32) error
 	DeleteOrderDetail(ctx context.Context, orderDetailID uint32) error
 }

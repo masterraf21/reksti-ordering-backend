@@ -291,3 +291,17 @@ func (_m *OrderUsecase) UpdateOrderPrice(ctx context.Context, orderID uint32) er
 
 	return r0
 }
+
+// UpdateOrderStatus provides a mock function with given fields: ctx, orderID, status
+func (_m *OrderUsecase) UpdateOrderStatus(ctx context.Context, orderID uint32, status int32) error {
+	ret := _m.Called(ctx, orderID, status)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, uint32, int32) error); ok {
+		r0 = rf(ctx, orderID, status)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}

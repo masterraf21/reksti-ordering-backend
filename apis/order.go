@@ -234,7 +234,7 @@ func (t *orderAPI) createOrderDetail(w http.ResponseWriter, r *http.Request) {
 		TotalPrice: body.TotalPrice,
 	}
 
-	err = t.orderUsecase.CreateOrderDetail(
+	id, err := t.orderUsecase.CreateOrderDetail(
 		context.TODO(),
 		&ordDetail,
 	)
@@ -249,7 +249,12 @@ func (t *orderAPI) createOrderDetail(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	httpUtils.HandleNoJSONResponse(w)
+	var response struct {
+		OrdDetailID uint32 `json:"order_details_id"`
+	}
+	response.OrdDetailID = id
+
+	httpUtils.HandleJSONResponse(w, r, response)
 }
 
 func (t *orderAPI) updateOrderPrice(w http.ResponseWriter, r *http.Request) {

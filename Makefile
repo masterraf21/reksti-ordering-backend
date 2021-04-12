@@ -6,7 +6,7 @@ run:
 
 test:
 	go get -u github.com/kyoh86/richgo
-	./cmds/env .env richgo test -count=1 ./... -v -cover
+	./cmds/env env-test richgo test -count=1 ./... -v -cover
 	go mod tidy
 
 test-repo:

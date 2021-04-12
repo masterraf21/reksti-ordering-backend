@@ -118,16 +118,12 @@ func (u *orderUsecase) UpdateOrder(ctx context.Context, orderID uint32, order *m
 func (u *orderUsecase) CreateOrderDetail(
 	ctx context.Context,
 	orderD *models.OrderDetails,
-) error {
-	err := u.orderDetailsRepo.Store(
+) (id uint32, err error) {
+	id, err = u.orderDetailsRepo.Store(
 		ctx,
 		orderD,
 	)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return
 }
 
 func (u *orderUsecase) UpdateOrderPrice(ctx context.Context, orderID uint32) error {

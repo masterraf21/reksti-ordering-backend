@@ -65,3 +65,31 @@ You can store environment variables to a file, such as ".env". But, if you want 
 ./cmds/env .env go run main.go
 ```
 
+# Test Program
+To ensure code quality, one must test the code by its units. One can use docker to initiate the test dependency such as MySQL. To do test, one also need env configuration. See example below that is suited for the docker-compose.test configuration. Name the below file to `env-test`
+
+```shell
+MYSQL_DATABASE_NAME=test
+READER_HOST=localhost
+READER_PORT=3316
+READER_USER=test
+READER_PASSWORD=test
+WRITER_HOST=localhost
+WRITER_PORT=3316
+WRITER_USER=test
+WRITER_PASSWORD=test
+MYSQL_MIGRATOR_USERNAME=test
+MYSQL_MIGRATOR_PASSWORD=test
+MYSQL_HOST=localhost
+MYSQL_PORT=3316
+```
+
+Firstly migrate the db using
+```shell
+make migrate-test-up
+```
+
+Run the test using
+```shell
+make test
+```
