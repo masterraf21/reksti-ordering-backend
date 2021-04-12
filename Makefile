@@ -5,6 +5,9 @@ include .env
 run:
 	./cmds/env .env go run main.go
 
+build:
+	./cmds/env .env go build main.go
+
 dev: 
 	./cmds/env .env
 	gin --appPort ${PORT} --all -i main.go
