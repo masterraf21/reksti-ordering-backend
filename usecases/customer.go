@@ -32,7 +32,7 @@ func (u *customerUsecase) DeleteByID(ctx context.Context, CustomerID uint32) err
 	return err
 }
 
-func (u *customerUsecase) CreateCustomer(ctx context.Context, cust *models.Customer) error {
-	err := u.CustomerRepo.Store(ctx, cust)
-	return err
+func (u *customerUsecase) CreateCustomer(ctx context.Context, cust *models.Customer) (id uint32, err error) {
+	id, err = u.CustomerRepo.Store(ctx, cust)
+	return
 }

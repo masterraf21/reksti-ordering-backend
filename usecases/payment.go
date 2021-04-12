@@ -32,7 +32,7 @@ func (u *paymentUsecase) DeleteByID(ctx context.Context, paymentID uint32) error
 	return err
 }
 
-func (u *paymentUsecase) CreatePayment(ctx context.Context, payment *models.Payment) error {
-	err := u.PaymentRepo.Store(ctx, payment)
-	return err
+func (u *paymentUsecase) CreatePayment(ctx context.Context, payment *models.Payment) (id uint32, err error) {
+	id, err = u.PaymentRepo.Store(ctx, payment)
+	return
 }

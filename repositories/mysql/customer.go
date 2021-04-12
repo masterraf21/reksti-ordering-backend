@@ -110,7 +110,7 @@ func (r *customerRepo) DeleteByID(ctx context.Context, CustomerID uint32) error 
 	return nil
 }
 
-func (r *customerRepo) Store(ctx context.Context, cust *models.Customer) error {
+func (r *customerRepo) Store(ctx context.Context, cust *models.Customer) (custID uint32, err error) {
 	table := "customer"
 
 	query := sq.Insert(table).
@@ -120,7 +120,6 @@ func (r *customerRepo) Store(ctx context.Context, cust *models.Customer) error {
 			"customer_phone_number",
 			"customer_username",
 			"customer_password",
-			"account_status",
 		).
 		Values(
 			cust.FullName,
@@ -128,13 +127,24 @@ func (r *customerRepo) Store(ctx context.Context, cust *models.Customer) error {
 			cust.PhoneNumber,
 			cust.Username,
 			cust.Password,
-			cust.AccountStatus,
 		).
 		PlaceholderFormat(sq.Question)
-	_, err := query.ExecContext(ctx)
+
+	sqlInsert, argsInsert, err := query.ToSql()
+	res, err := r.Writer.ExecContext(
+		ctx,
+		sqlInsert,
+		argsInsert...,
+	)
 	if err != nil {
-		return err
+		return
 	}
 
-	return nil
+	id, err := res.LastInsertId()
+	if err != nil {
+		return
+	}
+	custID = uint32(id)
+
+	return
 }

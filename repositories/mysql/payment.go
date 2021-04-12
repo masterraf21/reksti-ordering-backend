@@ -107,7 +107,7 @@ func (t *paymentRepo) DeleteByID(ctx context.Context, paymentID uint32) error {
 	return nil
 }
 
-func (t *paymentRepo) Store(ctx context.Context, payment *models.Payment) error {
+func (t *paymentRepo) Store(ctx context.Context, payment *models.Payment) (paymentID uint32, err error) {
 	table := "payment"
 	now := time.Now()
 	nowInsert := now.Format(time.RFC3339)
@@ -124,11 +124,23 @@ func (t *paymentRepo) Store(ctx context.Context, payment *models.Payment) error 
 			payment.Amount,
 			payment.PaymentType,
 			nowInsert,
-		)
-	_, err := query.ExecContext(ctx)
+		).RunWith(t.Writer).
+		PlaceholderFormat(sq.Question)
+	sqlInsert, argsInsert, err := query.ToSql()
+	res, err := t.Writer.ExecContext(
+		ctx,
+		sqlInsert,
+		argsInsert...,
+	)
 	if err != nil {
-		return err
+		return
 	}
 
-	return err
+	id, err := res.LastInsertId()
+	if err != nil {
+		return
+	}
+	paymentID = uint32(id)
+
+	return
 }

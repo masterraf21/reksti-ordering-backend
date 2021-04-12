@@ -18,7 +18,7 @@ type CustomerRepository interface {
 	GetAll() ([]Customer, error)
 	GetByID(CustomerID uint32) (*Customer, error)
 	DeleteByID(ctx context.Context, CustomerID uint32) error
-	Store(ctx context.Context, cust *Customer) error
+	Store(ctx context.Context, cust *Customer) (uint32, error)
 }
 
 // CustomerUsecase for usecase
@@ -26,5 +26,5 @@ type CustomerUsecase interface {
 	GetAll() ([]Customer, error)
 	GetByID(CustomerID uint32) (*Customer, error)
 	DeleteByID(ctx context.Context, CustomerID uint32) error
-	CreateCustomer(ctx context.Context, cust *Customer) error
+	CreateCustomer(ctx context.Context, cust *Customer) (uint32, error)
 }

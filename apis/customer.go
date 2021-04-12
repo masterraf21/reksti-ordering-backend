@@ -134,11 +134,16 @@ func (c *customerAPI) Create(w http.ResponseWriter, r *http.Request) {
 		Password:    body.Password,
 	}
 
-	err := c.customerUsecase.CreateCustomer(context.TODO(), &cust)
+	id, err := c.customerUsecase.CreateCustomer(context.TODO(), &cust)
 	if err != nil {
 		httpUtils.HandleError(w, r, err, "failed to create customer", http.StatusInternalServerError)
 		return
 	}
 
-	httpUtils.HandleNoJSONResponse(w)
+	var response struct {
+		CustID uint32 `json:"customer_id"`
+	}
+	response.CustID = id
+
+	httpUtils.HandleJSONResponse(w, r, response)
 }

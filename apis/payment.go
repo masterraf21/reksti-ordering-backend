@@ -129,11 +129,16 @@ func (p *paymentAPI) Create(w http.ResponseWriter, r *http.Request) {
 		PaymentType: body.PaymentType,
 	}
 
-	err := p.paymentUsecase.CreatePayment(context.TODO(), &payment)
+	id, err := p.paymentUsecase.CreatePayment(context.TODO(), &payment)
 	if err != nil {
 		httpUtils.HandleError(w, r, err, "failed to create payment", http.StatusInternalServerError)
 		return
 	}
 
-	httpUtils.HandleNoJSONResponse(w)
+	var response struct {
+		PaymentID uint32 `json:"customer_id"`
+	}
+	response.PaymentID = id
+
+	httpUtils.HandleJSONResponse(w, r, response)
 }
