@@ -170,6 +170,7 @@ func (r *orderRepo) GetByStatusAndCustID(
 			&r.CustomerID,
 			&r.OrderDate,
 			&r.TotalPrice,
+			&r.Location,
 			&r.OrderStatus,
 		)
 		if err != nil {
@@ -205,6 +206,7 @@ func (r *orderRepo) GetByCustID(custID uint32) (res []models.Order, err error) {
 			&r.CustomerID,
 			&r.OrderDate,
 			&r.TotalPrice,
+			&r.Location,
 			&r.OrderStatus,
 		)
 		if err != nil {
@@ -237,6 +239,7 @@ func (r *orderRepo) GetAll() (res []models.Order, err error) {
 			&r.CustomerID,
 			&r.OrderDate,
 			&r.TotalPrice,
+			&r.Location,
 			&r.OrderStatus,
 		)
 		if err != nil {
@@ -274,6 +277,7 @@ func (r *orderRepo) GetByID(OrderID uint32) (res *models.Order, err error) {
 			&r.CustomerID,
 			&r.OrderDate,
 			&r.TotalPrice,
+			&r.Location,
 			&r.OrderStatus,
 		)
 		if err != nil {
@@ -296,10 +300,11 @@ func (r *orderRepo) UpdateByID(
 			"order_id": orderID,
 		}).
 		SetMap(map[string]interface{}{
-			"customer_id":  order.CustomerID,
-			"order_date":   order.OrderDate,
-			"total_price":  order.TotalPrice,
-			"order_status": order.OrderStatus,
+			"customer_id":    order.CustomerID,
+			"order_date":     order.OrderDate,
+			"total_price":    order.TotalPrice,
+			"order_location": order.Location,
+			"order_status":   order.OrderStatus,
 		}).
 		RunWith(r.Writer).
 		PlaceholderFormat(sq.Question)
@@ -344,12 +349,14 @@ func (r *orderRepo) Store(
 			"customer_id",
 			"order_date",
 			"total_price",
+			"order_location",
 			"order_status",
 		).
 		Values(
 			ord.CustomerID,
 			nowInsert,
 			ord.TotalPrice,
+			ord.Location,
 			ord.OrderStatus,
 		).
 		PlaceholderFormat(sq.Question)
@@ -392,12 +399,14 @@ func (r *orderRepo) BulkInsert(
 				"customer_id",
 				"order_date",
 				"total_price",
+				"order_location",
 				"order_status",
 			).
 			Values(
 				ord.CustomerID,
 				nowInsert,
 				ord.TotalPrice,
+				ord.Location,
 				ord.OrderStatus,
 			).
 			PlaceholderFormat(sq.Question)

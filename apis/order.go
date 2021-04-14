@@ -64,6 +64,7 @@ func (t *orderAPI) getAllOrders(w http.ResponseWriter, r *http.Request) {
 func (t *orderAPI) createOrder(w http.ResponseWriter, r *http.Request) {
 	var body struct {
 		CustomerID  uint32  `json:"customer_id"`
+		Location    string  `json:"location"`
 		TotalPrice  float32 `json:"total_price"`
 		OrderStatus int32   `json:"order_status"`
 	}
@@ -77,6 +78,7 @@ func (t *orderAPI) createOrder(w http.ResponseWriter, r *http.Request) {
 		CustomerID:  body.CustomerID,
 		TotalPrice:  body.TotalPrice,
 		OrderStatus: body.OrderStatus,
+		Location:    body.Location,
 	}
 
 	id, err := t.orderUsecase.CreateOrder(context.TODO(), &order)

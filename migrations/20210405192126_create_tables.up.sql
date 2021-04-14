@@ -32,6 +32,7 @@ CREATE TABLE IF NOT EXISTS orders (
   `customer_id` int(11) NOT NULL,
   `order_date` date NOT NULL,
   `total_price` float,
+  `order_location` varchar(200) NOT NULL,
   `order_status` int(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`order_id`),
   KEY `customer_id` (`customer_id`)

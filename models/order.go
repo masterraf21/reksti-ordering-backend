@@ -8,6 +8,7 @@ type Order struct {
 	CustomerID  uint32  `json:"customer_id"`
 	OrderDate   string  `json:"order_date"`
 	TotalPrice  float32 `json:"total_price"`
+	Location    string  `json:"order_location"`
 	OrderStatus int32   `json:"order_status,"` // 0:pending, 1:completed, 2:cancelled
 }
 

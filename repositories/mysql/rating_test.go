@@ -3,42 +3,12 @@ package mysql
 import (
 	"context"
 	"database/sql"
-	"log"
 	"testing"
 
 	"github.com/stretchr/testify/suite"
 
-	"github.com/masterraf21/reksti-ordering-backend/configs"
 	"github.com/masterraf21/reksti-ordering-backend/models"
-	"github.com/masterraf21/reksti-ordering-backend/utils/mysql"
 )
-
-func configureMySQL() (*sql.DB, *sql.DB) {
-	readerConfig := mysql.Option{
-		Host:     configs.MySQL.ReaderHost,
-		Port:     configs.MySQL.ReaderPort,
-		Database: configs.MySQL.Database,
-		User:     configs.MySQL.ReaderUser,
-		Password: configs.MySQL.ReaderPassword,
-	}
-
-	writerConfig := mysql.Option{
-		Host:     configs.MySQL.WriterHost,
-		Port:     configs.MySQL.WriterPort,
-		Database: configs.MySQL.Database,
-		User:     configs.MySQL.WriterUser,
-		Password: configs.MySQL.WriterPassword,
-	}
-
-	reader, writer, err := mysql.SetupDatabase(readerConfig, writerConfig)
-	if err != nil {
-		log.Fatalf("%s: %s", "Failed to connect mysql", err)
-	}
-
-	log.Println("MySQL connection is successfully established!")
-
-	return reader, writer
-}
 
 type ratingRepoTestSuite struct {
 	suite.Suite
@@ -133,11 +103,11 @@ func (s *ratingRepoTestSuite) TearDownTest() {
 func (s *ratingRepoTestSuite) TestInserts() {
 	s.Run("Store Rating", func() {
 		rating := models.Rating{
-			MenuID:  s.MenuID,
-			Score: 7,
-			Remarks:  "Halooo",
+			MenuID:       s.MenuID,
+			Score:        7,
+			Remarks:      "Halooo",
 			DateRecorded: "2021-04-14",
-			CustomerID:  s.CustomerID,
+			CustomerID:   s.CustomerID,
 		}
 		id, err := s.Repo.Store(&rating)
 		if err != nil {
@@ -162,11 +132,11 @@ func (s *ratingRepoTestSuite) TestInserts() {
 func (s *ratingRepoTestSuite) TestGet() {
 	s.Run("Get Rating By Id", func() {
 		rating := models.Rating{
-			MenuID:  s.MenuID,
-			Score: 7,
-			Remarks:  "Halooo",
+			MenuID:       s.MenuID,
+			Score:        7,
+			Remarks:      "Halooo",
 			DateRecorded: "2021-04-14",
-			CustomerID:  s.CustomerID,
+			CustomerID:   s.CustomerID,
 		}
 		id, err := s.Repo.Store(&rating)
 		if err != nil {
@@ -189,11 +159,11 @@ func (s *ratingRepoTestSuite) TestGet() {
 
 	s.Run("Get Rating by Menu", func() {
 		rating := models.Rating{
-			MenuID:  s.MenuID,
-			Score: 7,
-			Remarks:  "Halooo",
+			MenuID:       s.MenuID,
+			Score:        7,
+			Remarks:      "Halooo",
 			DateRecorded: "2021-04-14",
-			CustomerID:  s.CustomerID,
+			CustomerID:   s.CustomerID,
 		}
 		_, err := s.Repo.Store(&rating)
 		if err != nil {
@@ -215,11 +185,11 @@ func (s *ratingRepoTestSuite) TestGet() {
 
 	s.Run("Get Menu Score", func() {
 		rating := models.Rating{
-			MenuID:  s.MenuID,
-			Score: 7,
-			Remarks:  "Halooo",
+			MenuID:       s.MenuID,
+			Score:        7,
+			Remarks:      "Halooo",
 			DateRecorded: "2021-04-14",
-			CustomerID:  s.CustomerID,
+			CustomerID:   s.CustomerID,
 		}
 		id, err := s.Repo.Store(&rating)
 		if err != nil {
@@ -240,11 +210,11 @@ func (s *ratingRepoTestSuite) TestGet() {
 func (s *ratingRepoTestSuite) TestGet2() {
 	s.Run("Get All Rating", func() {
 		rating := models.Rating{
-			MenuID:  s.MenuID,
-			Score: 7,
-			Remarks:  "Halooo",
+			MenuID:       s.MenuID,
+			Score:        7,
+			Remarks:      "Halooo",
 			DateRecorded: "2021-04-14",
-			CustomerID:  s.CustomerID,
+			CustomerID:   s.CustomerID,
 		}
 		for i := 0; i < 5; i++ {
 			id, err := s.Repo.Store(&rating)
@@ -267,11 +237,11 @@ func (s *ratingRepoTestSuite) TestGet2() {
 func (s *ratingRepoTestSuite) TestUpdate() {
 	s.Run("Update Rating", func() {
 		rating := models.Rating{
-			MenuID:  s.MenuID,
-			Score: 7,
-			Remarks:  "Halooo",
+			MenuID:       s.MenuID,
+			Score:        7,
+			Remarks:      "Halooo",
 			DateRecorded: "2021-04-14",
-			CustomerID:  s.CustomerID,
+			CustomerID:   s.CustomerID,
 		}
 		id, err := s.Repo.Store(&rating)
 		if err != nil {
@@ -280,11 +250,11 @@ func (s *ratingRepoTestSuite) TestUpdate() {
 		s.Require().NoError(err)
 		s.Assert().NotEmpty(id)
 		rating2 := models.Rating{
-			MenuID:  s.MenuID,
-			Score: 5,
-			Remarks:  "Tested by Tape",
+			MenuID:       s.MenuID,
+			Score:        5,
+			Remarks:      "Tested by Tape",
 			DateRecorded: "2021-04-14",
-			CustomerID:  s.CustomerID,
+			CustomerID:   s.CustomerID,
 		}
 
 		err = s.Repo.UpdateByID(id, &rating2)
@@ -306,11 +276,11 @@ func (s *ratingRepoTestSuite) TestUpdate() {
 func (s *ratingRepoTestSuite) TestDelete() {
 	s.Run("Delete Order By ID", func() {
 		rating := models.Rating{
-			MenuID:  s.MenuID,
-			Score: 7,
-			Remarks:  "Halooo",
+			MenuID:       s.MenuID,
+			Score:        7,
+			Remarks:      "Halooo",
 			DateRecorded: "2021-04-14",
-			CustomerID:  s.CustomerID,
+			CustomerID:   s.CustomerID,
 		}
 		id, err := s.Repo.Store(&rating)
 		if err != nil {
