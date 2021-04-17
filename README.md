@@ -93,3 +93,25 @@ Run the test using
 ```shell
 make test
 ```
+
+# Deploy
+One can deploy this application using Docker. Make sure docker is installed on your system. There is already an example of env file for production called env-prod.
+Create .env file from env-prod:
+```shell
+cp env-prod .env
+```
+Then deploy the database depency docker container using:
+
+``` shell
+./cmds/docker-up-prod.sh
+```
+
+Make sure migrate is installed on the system to do database migration. And then do this:
+``` shell
+make migrate-prod-up
+```
+
+Finally deploy the Go application using:
+``` shell
+./cmds/deploy.sh
+```

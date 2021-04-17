@@ -41,6 +41,16 @@ migrate-dev-down:
 	migrate \
   	-source file://migrations \
   	-database "mysql://user:password@tcp(localhost:3326)/ordering" down
- 
+
+migrate-prod-up:
+	migrate \
+  	-source file://migrations \
+  	-database "mysql://user:password@tcp(localhost:3336)/ordering" up
+
+migrate-prod-down:
+	migrate \
+  	-source file://migrations \
+  	-database "mysql://user:password@tcp(localhost:3336)/ordering" down
+
 mock:
 	@mockery --dir models --all
