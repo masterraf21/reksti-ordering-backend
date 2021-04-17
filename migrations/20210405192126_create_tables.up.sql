@@ -53,8 +53,9 @@ CREATE TABLE IF NOT EXISTS payment (
   `payment_id` int(11) NOT NULL AUTO_INCREMENT,
   `order_id` int(11) NOT NULL,
   `amount` float NOT NULL,
-  `payment_type` varchar(50) NOT NULL,
+  `payment_type_id` int(11) NOT NULL,
   `payment_date` date NOT NULL,
+  `payment_status` int(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`payment_id`),
   KEY `order_id` (`order_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;

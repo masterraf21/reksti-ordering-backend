@@ -2,7 +2,6 @@ package apis
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -58,54 +57,45 @@ func (t *ratingAPI) createRating(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	id, err := t.ratingRepo.Store(&m)
-	m.RatingID = id
 	if err != nil {
-		fmt.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
+		httpUtils.HandleError(w, r, err, "failed to create rating", http.StatusInternalServerError)
 		return
 	}
-	response, err := json.Marshal(&m)
-	if err != nil {
-		fmt.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
+	var response struct {
+		ID uint32 `json:"rating_id"`
 	}
-	w.WriteHeader(http.StatusCreated)
-	w.Write(response)
+	response.ID = id
+	httpUtils.HandleJSONResponse(w, r, response)
 }
 
 func (t *ratingAPI) deleteRating(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(mux.Vars(r)["id"])
-	m, err := t.ratingRepo.GetByID(uint32(id))
+	_, err = t.ratingRepo.GetByID(uint32(id))
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 	err = t.ratingRepo.DeleteByID(uint32(id))
 	if err != nil {
-		fmt.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
+		httpUtils.HandleError(w, r, err, "failed to delete rating", http.StatusInternalServerError)
 		return
 	}
-	w.Header().Add("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(m); err != nil {
-		fmt.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
-	}
+	httpUtils.HandleNoJSONResponse(w)
 }
 
 func (t *ratingAPI) getByID(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(mux.Vars(r)["id"])
 	m, err := t.ratingRepo.GetByID(uint32(id))
 	if err != nil {
-		w.WriteHeader(http.StatusNotFound)
+		httpUtils.HandleError(w, r, err, "failted to get rating by id", http.StatusInternalServerError)
 		return
 	}
-	w.Header().Add("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(m); err != nil {
-		fmt.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
+
+	var data struct {
+		Data *models.Rating `json:"data"`
 	}
+	data.Data = m
+	httpUtils.HandleJSONResponse(w, r, data)
 }
 
 func (t *ratingAPI) getByMenu(w http.ResponseWriter, r *http.Request) {

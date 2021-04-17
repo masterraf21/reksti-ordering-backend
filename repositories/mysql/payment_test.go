@@ -11,11 +11,12 @@ import (
 
 type paymentRepoTestSuite struct {
 	suite.Suite
-	Reader     *sql.DB
-	Writer     *sql.DB
-	Repo       models.PaymentRepository
-	OrderID    uint32
-	CustomerID uint32
+	Reader        *sql.DB
+	Writer        *sql.DB
+	Repo          models.PaymentRepository
+	OrderID       uint32
+	CustomerID    uint32
+	PaymentTypeID uint32
 }
 
 func TestPaymentRepository(t *testing.T) {
@@ -29,6 +30,7 @@ func (s *paymentRepoTestSuite) SetupSuite() {
 	s.Repo = NewPaymentRepo(reader, writer)
 	orderRepo := NewOrderRepo(reader, writer)
 	customerRepo := NewCustomerRepo(reader, writer)
+	paymentTypeRepo := NewPaymentTypeRepo(reader, writer)
 
 	cust := models.Customer{
 		FullName:    "name test",
@@ -53,6 +55,16 @@ func (s *paymentRepoTestSuite) SetupSuite() {
 		panic(err)
 	}
 	s.OrderID = orderID
+
+	paymentType := models.PaymentType{
+		Method:  "GoPay",
+		Company: "GoJek",
+	}
+	ptID, err := paymentTypeRepo.Store(context.TODO(), &paymentType)
+	if err != nil {
+		panic(err)
+	}
+	s.PaymentTypeID = ptID
 }
 
 func (s *paymentRepoTestSuite) TearDownSuite() {
@@ -60,6 +72,7 @@ func (s *paymentRepoTestSuite) TearDownSuite() {
 		"DELETE FROM payment;",
 		"DELETE FROM orders;",
 		"DELETE FROM customer;",
+		"DELETE FROM payment_type;",
 	}
 
 	var err error
@@ -94,9 +107,9 @@ func (s *paymentRepoTestSuite) TearDownTest() {
 func (s *paymentRepoTestSuite) TestStore() {
 	s.Run("Store Payment", func() {
 		payment := models.Payment{
-			OrderID:     s.OrderID,
-			Amount:      10000,
-			PaymentType: "GoPay",
+			OrderID:       s.OrderID,
+			Amount:        10000,
+			PaymentTypeID: s.PaymentTypeID,
 		}
 		id, err := s.Repo.Store(context.TODO(), &payment)
 		if err != nil {
@@ -114,16 +127,16 @@ func (s *paymentRepoTestSuite) TestStore() {
 		s.Equal(1, len(result))
 		s.Equal(payment.OrderID, a.OrderID)
 		s.Equal(payment.Amount, a.Amount)
-		s.Equal(payment.PaymentType, a.PaymentType)
+		s.Equal(payment.PaymentTypeID, a.PaymentTypeID)
 	})
 }
 
 func (s *paymentRepoTestSuite) TestGet() {
 	s.Run("Get All Payment", func() {
 		payment := models.Payment{
-			OrderID:     s.OrderID,
-			Amount:      10000,
-			PaymentType: "GoPay",
+			OrderID:       s.OrderID,
+			Amount:        10000,
+			PaymentTypeID: s.PaymentTypeID,
 		}
 
 		for i := 0; i < 5; i++ {
@@ -147,9 +160,9 @@ func (s *paymentRepoTestSuite) TestGet() {
 func (s *paymentRepoTestSuite) TestGet2() {
 	s.Run("Get Payment By ID", func() {
 		payment := models.Payment{
-			OrderID:     s.OrderID,
-			Amount:      10000,
-			PaymentType: "GoPay",
+			OrderID:       s.OrderID,
+			Amount:        10000,
+			PaymentTypeID: s.PaymentTypeID,
 		}
 
 		id, err := s.Repo.Store(context.TODO(), &payment)
@@ -167,16 +180,16 @@ func (s *paymentRepoTestSuite) TestGet2() {
 		s.Equal(payment.Amount, result.Amount)
 		s.Equal(payment.OrderID, result.OrderID)
 		s.Equal(id, result.PaymentID)
-		s.Equal(payment.PaymentType, result.PaymentType)
+		s.Equal(payment.PaymentTypeID, result.PaymentTypeID)
 	})
 }
 
 func (s *paymentRepoTestSuite) TestDelete() {
 	s.Run("Delete Payment By ID", func() {
 		payment := models.Payment{
-			OrderID:     s.OrderID,
-			Amount:      10000,
-			PaymentType: "GoPay",
+			OrderID:       s.OrderID,
+			Amount:        10000,
+			PaymentTypeID: s.PaymentTypeID,
 		}
 
 		id, err := s.Repo.Store(context.TODO(), &payment)

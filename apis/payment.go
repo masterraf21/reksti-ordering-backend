@@ -12,7 +12,8 @@ import (
 )
 
 type paymentAPI struct {
-	paymentUsecase models.PaymentUsecase
+	paymentUsecase     models.PaymentUsecase
+	paymentTypeUsecase models.PaymentTypeUsecase
 }
 
 // NewPaymentAPI will initiate api
@@ -22,9 +23,129 @@ func NewPaymentAPI(r *mux.Router, pac models.PaymentUsecase) {
 	}
 
 	r.HandleFunc("/payment", paymentAPI.GetAll).Methods("GET")
+	r.HandleFunc("/payment/type", paymentAPI.GetAllType).Methods("GET")
 	r.HandleFunc("/payment", paymentAPI.Create).Methods("POST")
-	r.HandleFunc("/payment/{id_payment}", paymentAPI.GetAll).Methods("GET")
+	r.HandleFunc("/payment/type", paymentAPI.CreateType).Methods("POST")
+	r.HandleFunc("/payment/{id_payment}", paymentAPI.GetByID).Methods("GET")
+	r.HandleFunc("/payment/type/{id_payment_type}", paymentAPI.GetTypeByID).Methods("GET")
 	r.HandleFunc("/payment/{id_payment}", paymentAPI.DeleteByID).Methods("DELETE")
+	r.HandleFunc("/payment/type/{id_payment_type}", paymentAPI.DeleteTypeByID).Methods("DELETE")
+}
+
+func (p *paymentAPI) DeleteTypeByID(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+
+	paymentTypeID, err := strconv.ParseInt(params["id_payment_type"], 10, 64)
+	if err != nil {
+		httpUtils.HandleError(
+			w,
+			r,
+			err,
+			params["id_payment_type"]+" is not integer",
+			http.StatusBadRequest,
+		)
+		return
+	}
+
+	err = p.paymentTypeUsecase.DeleteByID(context.TODO(), uint32(paymentTypeID))
+	if err != nil {
+		httpUtils.HandleError(
+			w,
+			r,
+			err,
+			"failed to delete payment type by id",
+			http.StatusInternalServerError,
+		)
+		return
+	}
+
+	httpUtils.HandleNoJSONResponse(w)
+}
+
+func (p *paymentAPI) GetTypeByID(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+
+	paymentTypeID, err := strconv.ParseInt(params["id_payment_type"], 10, 64)
+	if err != nil {
+		httpUtils.HandleError(
+			w,
+			r,
+			err,
+			params["id_payment_type"]+" is not integer",
+			http.StatusBadRequest,
+		)
+		return
+	}
+
+	result, err := p.paymentTypeUsecase.GetByID(uint32(paymentTypeID))
+	if err != nil {
+		httpUtils.HandleError(
+			w,
+			r,
+			err,
+			"failed to get payment type data by id",
+			http.StatusInternalServerError,
+		)
+		return
+	}
+
+	var data struct {
+		Data *models.PaymentType `json:"data"`
+	}
+
+	data.Data = result
+
+	httpUtils.HandleJSONResponse(w, r, data)
+}
+
+func (p *paymentAPI) CreateType(w http.ResponseWriter, r *http.Request) {
+	var body struct {
+		Method  string `json:"method"`
+		Company string `json:"company"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		httpUtils.HandleError(w, r, err, "bad request body", http.StatusBadRequest)
+	}
+	defer r.Body.Close()
+
+	paymentType := models.PaymentType{
+		Method:  body.Method,
+		Company: body.Company,
+	}
+
+	id, err := p.paymentTypeUsecase.CreatePaymentType(context.TODO(), &paymentType)
+	if err != nil {
+		httpUtils.HandleError(w, r, err, "failed to create payment type", http.StatusInternalServerError)
+		return
+	}
+
+	var response struct {
+		ID uint32 `json:"payment_type_id"`
+	}
+	response.ID = id
+
+	httpUtils.HandleJSONResponse(w, r, response)
+}
+
+func (p *paymentAPI) GetAllType(w http.ResponseWriter, r *http.Request) {
+	result, err := p.paymentTypeUsecase.GetAll()
+	if err != nil {
+		httpUtils.HandleError(
+			w,
+			r,
+			err,
+			"failed to get payment type data",
+			http.StatusInternalServerError,
+		)
+		return
+	}
+
+	var data struct {
+		Data []models.PaymentType `json:"data"`
+	}
+
+	data.Data = result
+	httpUtils.HandleJSONResponse(w, r, data)
 }
 
 func (p *paymentAPI) GetAll(w http.ResponseWriter, r *http.Request) {
@@ -114,9 +235,9 @@ func (p *paymentAPI) DeleteByID(w http.ResponseWriter, r *http.Request) {
 
 func (p *paymentAPI) Create(w http.ResponseWriter, r *http.Request) {
 	var body struct {
-		OrderID     uint32  `json:"order_id"`
-		Amount      float32 `json:"amount"`
-		PaymentType string  `json:"payment_type"`
+		OrderID       uint32  `json:"order_id"`
+		Amount        float32 `json:"amount"`
+		PaymentTypeID uint32  `json:"payment_type_id"`
 	}
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
 		httpUtils.HandleError(w, r, err, "bad request body", http.StatusBadRequest)
@@ -124,9 +245,9 @@ func (p *paymentAPI) Create(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 
 	payment := models.Payment{
-		OrderID:     body.OrderID,
-		Amount:      body.Amount,
-		PaymentType: body.PaymentType,
+		OrderID:       body.OrderID,
+		Amount:        body.Amount,
+		PaymentTypeID: body.PaymentTypeID,
 	}
 
 	id, err := p.paymentUsecase.CreatePayment(context.TODO(), &payment)

@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -61,35 +60,28 @@ func (t *menuAPI) createMenu(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	id, err := t.menuUsecase.CreateMenu(context.Background(), &m)
-	m.MenuID = id
 	if err != nil {
-		fmt.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
+		httpUtils.HandleError(w, r, err, "cannot create menu", http.StatusInternalServerError)
 		return
 	}
-	response, err := json.Marshal(&m)
-	if err != nil {
-		fmt.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
+
+	var response struct {
+		ID uint32 `json:"menu_id"`
 	}
-	w.WriteHeader(http.StatusCreated)
-	w.Write(response)
+	response.ID = id
+
+	httpUtils.HandleJSONResponse(w, r, response)
 }
 
 func (t *menuAPI) deleteMenu(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(mux.Vars(r)["id"])
-	res, err := t.menuUsecase.DeleteMenu(context.Background(), uint32(id))
+	_, err = t.menuUsecase.DeleteMenu(context.Background(), uint32(id))
 	if err != nil {
-		fmt.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
+		httpUtils.HandleError(w, r, err, "failed to delete menu", http.StatusInternalServerError)
 		return
 	}
-	w.Header().Add("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(res); err != nil {
-		fmt.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
-	}
+
+	httpUtils.HandleNoJSONResponse(w)
 }
 
 func (t *menuAPI) getByID(w http.ResponseWriter, r *http.Request) {
@@ -100,6 +92,7 @@ func (t *menuAPI) getByID(w http.ResponseWriter, r *http.Request) {
 	res, err := t.menuUsecase.GetByID(uint32(id))
 	if err != nil {
 		httpUtils.HandleError(w, r, err, "failed to get menu by id", http.StatusInternalServerError)
+		return
 	}
 
 	var data struct {
@@ -138,33 +131,26 @@ func (t *menuAPI) createType(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	id, err := t.menuUsecase.CreateType(context.Background(), &m)
-	m.MenuTypeID = id
 	if err != nil {
-		fmt.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
+		httpUtils.HandleError(w, r, err, "failed to create menu tyoe", http.StatusInternalServerError)
 		return
 	}
-	response, err := json.Marshal(&m)
-	if err != nil {
-		fmt.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
+
+	var response struct {
+		ID uint32 `json:"menu_type_id"`
 	}
-	w.WriteHeader(http.StatusCreated)
-	w.Write(response)
+
+	response.ID = id
+
+	httpUtils.HandleJSONResponse(w, r, response)
 }
 
 func (t *menuAPI) deleteType(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(mux.Vars(r)["id"])
-	m, err := t.menuUsecase.DeleteType(context.Background(), uint32(id))
+	_, err = t.menuUsecase.DeleteType(context.Background(), uint32(id))
 	if err != nil {
-		fmt.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
+		httpUtils.HandleError(w, r, err, "failed to delete menu type", http.StatusInternalServerError)
 		return
 	}
-	w.Header().Add("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(m); err != nil {
-		fmt.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
-	}
+	httpUtils.HandleNoJSONResponse(w)
 }

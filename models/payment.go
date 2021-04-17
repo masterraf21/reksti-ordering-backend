@@ -4,11 +4,11 @@ import "context"
 
 // Payment huhu
 type Payment struct {
-	PaymentID   uint32  `json:"payment_id"`
-	OrderID     uint32  `json:"order_id"`
-	Amount      float32 `json:"amount"`
-	PaymentType string  `json:"paymeny_type"`
-	PaymentDate string  `json:"payment_date"`
+	PaymentID     uint32  `json:"payment_id"`
+	OrderID       uint32  `json:"order_id"`
+	Amount        float32 `json:"amount"`
+	PaymentTypeID uint32  `json:"payment_type_id"`
+	PaymentDate   string  `json:"payment_date"`
 }
 
 // PaymentRepository pymnerepo

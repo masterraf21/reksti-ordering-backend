@@ -3,34 +3,32 @@ package mysql
 import (
 	"context"
 	"database/sql"
-	"time"
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/masterraf21/reksti-ordering-backend/models"
 	logger "github.com/sirupsen/logrus"
 )
 
-type paymentRepo struct {
+type paymentTypeRepo struct {
 	Reader *sql.DB
 	Writer *sql.DB
 }
 
-// NewPaymentRepo will initiate repo
-func NewPaymentRepo(reader, writer *sql.DB) models.PaymentRepository {
-	return &paymentRepo{
+// NewPaymentTypeRepo will initiate repo
+func NewPaymentTypeRepo(reader, writer *sql.DB) models.PaymentTypeRepository {
+	return &paymentTypeRepo{
 		Reader: reader,
 		Writer: writer,
 	}
 }
 
-func (t *paymentRepo) GetAll() (res []models.Payment, err error) {
-	table := "payment"
+func (t *paymentTypeRepo) GetAll() (res []models.PaymentType, err error) {
+	table := "payment_type"
 
 	query := sq.Select("*").
 		From(table).
 		RunWith(t.Reader).
 		PlaceholderFormat(sq.Question)
-
 	rows, err := query.Query()
 	if err != nil {
 		return
@@ -38,13 +36,11 @@ func (t *paymentRepo) GetAll() (res []models.Payment, err error) {
 	defer rows.Close()
 
 	for rows.Next() {
-		var r models.Payment
+		var r models.PaymentType
 		err = rows.Scan(
-			&r.PaymentID,
-			&r.OrderID,
-			&r.Amount,
 			&r.PaymentTypeID,
-			&r.PaymentDate,
+			&r.Method,
+			&r.Company,
 		)
 		if err != nil {
 			logger.Error("Selection Failed: " + err.Error())
@@ -55,16 +51,16 @@ func (t *paymentRepo) GetAll() (res []models.Payment, err error) {
 	return
 }
 
-func (t *paymentRepo) GetByID(paymentID uint32) (res *models.Payment, err error) {
-	table := "payment"
+func (t *paymentTypeRepo) GetByID(paymentTypeID uint32) (res *models.PaymentType, err error) {
+	table := "payment_type"
 
 	query := sq.Select("*").
 		From(table).
-		Where(sq.Eq{
-			"payment_id": paymentID,
-		}).
 		RunWith(t.Reader).
-		PlaceholderFormat(sq.Question)
+		PlaceholderFormat(sq.Question).
+		Where(sq.Eq{
+			"payment_type_id": paymentTypeID,
+		})
 
 	rows, err := query.Query()
 	if err != nil {
@@ -73,13 +69,11 @@ func (t *paymentRepo) GetByID(paymentID uint32) (res *models.Payment, err error)
 	defer rows.Close()
 
 	for rows.Next() {
-		var r models.Payment
+		var r models.PaymentType
 		err = rows.Scan(
-			&r.PaymentID,
-			&r.OrderID,
-			&r.Amount,
 			&r.PaymentTypeID,
-			&r.PaymentDate,
+			&r.Method,
+			&r.Company,
 		)
 		if err != nil {
 			logger.Error("Selection Failed: " + err.Error())
@@ -90,15 +84,16 @@ func (t *paymentRepo) GetByID(paymentID uint32) (res *models.Payment, err error)
 	return
 }
 
-func (t *paymentRepo) DeleteByID(ctx context.Context, paymentID uint32) error {
-	table := "payment"
+func (t *paymentTypeRepo) DeleteByID(ctx context.Context, paymentTypeID uint32) error {
+	table := "payment_type"
 
 	query := sq.Delete("").
 		From(table).
+		RunWith(t.Reader).
+		PlaceholderFormat(sq.Question).
 		Where(sq.Eq{
-			"payment_id": paymentID,
-		}).
-		RunWith(t.Reader)
+			"payment_type_id": paymentTypeID,
+		})
 	_, err := query.ExecContext(ctx)
 	if err != nil {
 		return err
@@ -107,24 +102,19 @@ func (t *paymentRepo) DeleteByID(ctx context.Context, paymentID uint32) error {
 	return nil
 }
 
-func (t *paymentRepo) Store(ctx context.Context, payment *models.Payment) (paymentID uint32, err error) {
-	table := "payment"
-	now := time.Now()
-	nowInsert := now.Format(time.RFC3339)
+func (t *paymentTypeRepo) Store(ctx context.Context, paymentType *models.PaymentType) (ptID uint32, err error) {
+	table := "payment_type"
 
 	query := sq.Insert(table).
 		Columns(
-			"order_id",
-			"amount",
-			"payment_type_id",
-			"payment_date",
+			"payment_method",
+			"payment_company",
 		).
 		Values(
-			payment.OrderID,
-			payment.Amount,
-			payment.PaymentTypeID,
-			nowInsert,
-		).RunWith(t.Writer).
+			paymentType.Method,
+			paymentType.Method,
+		).
+		RunWith(t.Writer).
 		PlaceholderFormat(sq.Question)
 	sqlInsert, argsInsert, err := query.ToSql()
 	res, err := t.Writer.ExecContext(
@@ -140,7 +130,7 @@ func (t *paymentRepo) Store(ctx context.Context, payment *models.Payment) (payme
 	if err != nil {
 		return
 	}
-	paymentID = uint32(id)
+	ptID = uint32(id)
 
 	return
 }

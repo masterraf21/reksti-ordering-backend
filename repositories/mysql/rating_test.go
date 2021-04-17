@@ -71,6 +71,8 @@ func (s *ratingRepoTestSuite) SetupSuite() {
 func (s *ratingRepoTestSuite) TearDownSuite() {
 	querys := []string{
 		"DELETE FROM rating;",
+		"DELETE FROM customer;",
+		"DELETE FROM menu;",
 	}
 	var err error
 	for _, query := range querys {

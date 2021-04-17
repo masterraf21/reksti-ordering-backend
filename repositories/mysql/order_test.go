@@ -141,6 +141,7 @@ func (s *orderRepoTestSuite) TestInserts() {
 			CustomerID:  s.CustomerID,
 			TotalPrice:  0,
 			OrderStatus: 0,
+			Location:    "siberia",
 		}
 		id, err := s.Repo.Store(context.TODO(), &order)
 		if err != nil {
