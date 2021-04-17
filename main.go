@@ -91,13 +91,15 @@ func (s *Server) Start() {
 	customerUsecase := usecases.NewCustomerUsecase(customerRepo)
 
 	paymentRepo := repoMysql.NewPaymentRepo(s.Reader, s.Writer)
+	paymentTypeRepo := repoMysql.NewPaymentTypeRepo(s.Reader, s.Writer)
 	paymentUsecase := usecases.NewPaymentUsecase(paymentRepo)
+	paymentTypeUsecase := usecases.NewPaymentTypeUsecase(paymentTypeRepo)
 
 	apis.NewOrderAPI(r, orderUsecase)
 	apis.NewMenuAPI(r, menuUsecase)
 	apis.NewRatingAPI(r, ratingRepo)
 	apis.NewCustomerAPI(r, customerUsecase)
-	apis.NewPaymentAPI(r, paymentUsecase)
+	apis.NewPaymentAPI(r, paymentUsecase, paymentTypeUsecase)
 
 	srv := &http.Server{
 		Handler:      r,

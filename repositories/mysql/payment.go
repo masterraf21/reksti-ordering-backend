@@ -23,6 +23,21 @@ func NewPaymentRepo(reader, writer *sql.DB) models.PaymentRepository {
 	}
 }
 
+func (t *paymentRepo) UpdateStatus(ctx context.Context, paymentID uint32, status int32) error {
+	table := "payment"
+
+	query := sq.Update(table).
+		Set("payment_status", status).
+		RunWith(t.Writer).
+		PlaceholderFormat(sq.Question)
+	_, err := query.ExecContext(ctx)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (t *paymentRepo) GetAll() (res []models.Payment, err error) {
 	table := "payment"
 
@@ -45,6 +60,7 @@ func (t *paymentRepo) GetAll() (res []models.Payment, err error) {
 			&r.Amount,
 			&r.PaymentTypeID,
 			&r.PaymentDate,
+			&r.PaymentStatus,
 		)
 		if err != nil {
 			logger.Error("Selection Failed: " + err.Error())
@@ -80,6 +96,7 @@ func (t *paymentRepo) GetByID(paymentID uint32) (res *models.Payment, err error)
 			&r.Amount,
 			&r.PaymentTypeID,
 			&r.PaymentDate,
+			&r.PaymentStatus,
 		)
 		if err != nil {
 			logger.Error("Selection Failed: " + err.Error())
@@ -107,7 +124,10 @@ func (t *paymentRepo) DeleteByID(ctx context.Context, paymentID uint32) error {
 	return nil
 }
 
-func (t *paymentRepo) Store(ctx context.Context, payment *models.Payment) (paymentID uint32, err error) {
+func (t *paymentRepo) Store(
+	ctx context.Context,
+	payment *models.Payment,
+) (paymentID uint32, err error) {
 	table := "payment"
 	now := time.Now()
 	nowInsert := now.Format(time.RFC3339)

@@ -17,9 +17,10 @@ type paymentAPI struct {
 }
 
 // NewPaymentAPI will initiate api
-func NewPaymentAPI(r *mux.Router, pac models.PaymentUsecase) {
+func NewPaymentAPI(r *mux.Router, pac models.PaymentUsecase, ptc models.PaymentTypeUsecase) {
 	paymentAPI := &paymentAPI{
-		paymentUsecase: pac,
+		paymentUsecase:     pac,
+		paymentTypeUsecase: ptc,
 	}
 
 	r.HandleFunc("/payment", paymentAPI.GetAll).Methods("GET")
@@ -30,6 +31,45 @@ func NewPaymentAPI(r *mux.Router, pac models.PaymentUsecase) {
 	r.HandleFunc("/payment/type/{id_payment_type}", paymentAPI.GetTypeByID).Methods("GET")
 	r.HandleFunc("/payment/{id_payment}", paymentAPI.DeleteByID).Methods("DELETE")
 	r.HandleFunc("/payment/type/{id_payment_type}", paymentAPI.DeleteTypeByID).Methods("DELETE")
+	r.HandleFunc("/payment/{id_payment}/status", paymentAPI.UpdateStatus).Methods("PUT")
+}
+
+func (p *paymentAPI) UpdateStatus(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+
+	paymentID, err := strconv.ParseInt(params["id_payment"], 10, 64)
+	if err != nil {
+		httpUtils.HandleError(
+			w,
+			r,
+			err,
+			params["id_payment"]+" is not integer",
+			http.StatusBadRequest,
+		)
+		return
+	}
+
+	var body struct {
+		Status int32 `json:"status"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		httpUtils.HandleError(w, r, err, "bad request body", http.StatusBadRequest)
+	}
+	defer r.Body.Close()
+
+	err = p.paymentUsecase.UpdateStatus(context.TODO(), uint32(paymentID), body.Status)
+	if err != nil {
+		httpUtils.HandleError(
+			w,
+			r,
+			err,
+			"failed to update payment status",
+			http.StatusBadRequest,
+		)
+		return
+	}
+
+	httpUtils.HandleNoJSONResponse(w)
 }
 
 func (p *paymentAPI) DeleteTypeByID(w http.ResponseWriter, r *http.Request) {

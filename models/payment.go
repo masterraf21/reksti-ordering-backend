@@ -9,6 +9,7 @@ type Payment struct {
 	Amount        float32 `json:"amount"`
 	PaymentTypeID uint32  `json:"payment_type_id"`
 	PaymentDate   string  `json:"payment_date"`
+	PaymentStatus int32   `json:"payment_status"` // 0:pending,1:completed,1:cancelled
 }
 
 // PaymentRepository pymnerepo
@@ -17,6 +18,7 @@ type PaymentRepository interface {
 	GetByID(paymentID uint32) (*Payment, error)
 	DeleteByID(ctx context.Context, paymentID uint32) error
 	Store(ctx context.Context, payment *Payment) (uint32, error)
+	UpdateStatus(ctx context.Context, paymentID uint32, status int32) error
 }
 
 // PaymentUsecase for payment
@@ -25,4 +27,5 @@ type PaymentUsecase interface {
 	GetByID(paymentID uint32) (*Payment, error)
 	DeleteByID(ctx context.Context, paymentID uint32) error
 	CreatePayment(ctx context.Context, payment *Payment) (uint32, error)
+	UpdateStatus(ctx context.Context, paymentID uint32, status int32) error
 }

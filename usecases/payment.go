@@ -17,6 +17,11 @@ func NewPaymentUsecase(pyr models.PaymentRepository) models.PaymentUsecase {
 	}
 }
 
+func (u *paymentUsecase) UpdateStatus(ctx context.Context, paymentID uint32, status int32) error {
+	err := u.PaymentRepo.UpdateStatus(ctx, paymentID, status)
+	return err
+}
+
 func (u *paymentUsecase) GetAll() (res []models.Payment, err error) {
 	res, err = u.PaymentRepo.GetAll()
 	return

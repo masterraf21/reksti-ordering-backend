@@ -112,7 +112,7 @@ func (t *paymentTypeRepo) Store(ctx context.Context, paymentType *models.Payment
 		).
 		Values(
 			paymentType.Method,
-			paymentType.Method,
+			paymentType.Company,
 		).
 		RunWith(t.Writer).
 		PlaceholderFormat(sq.Question)
