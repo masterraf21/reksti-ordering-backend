@@ -13,6 +13,7 @@ import (
 	"github.com/masterraf21/reksti-ordering-backend/apis"
 	repoMysql "github.com/masterraf21/reksti-ordering-backend/repositories/mysql"
 	"github.com/masterraf21/reksti-ordering-backend/usecases"
+	"github.com/rs/cors"
 
 	"github.com/masterraf21/reksti-ordering-backend/configs"
 	"github.com/masterraf21/reksti-ordering-backend/utils/mysql"
@@ -101,8 +102,10 @@ func (s *Server) Start() {
 	apis.NewCustomerAPI(r, customerUsecase)
 	apis.NewPaymentAPI(r, paymentUsecase, paymentTypeUsecase)
 
+	handler := cors.Default().Handler(r)
+
 	srv := &http.Server{
-		Handler:      r,
+		Handler:      handler,
 		Addr:         ":" + port,
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
