@@ -152,7 +152,7 @@ func (r *ratingRepo) GetMenuScore(menuID uint32) (res float32, err error) {
 	defer rows.Close()
 
 	var sum float32
-	var count = 0
+	count := 0
 	for rows.Next() {
 		var score float32
 		err = rows.Scan(
@@ -162,9 +162,9 @@ func (r *ratingRepo) GetMenuScore(menuID uint32) (res float32, err error) {
 			logger.Error("Selection Failed: " + err.Error())
 		}
 		sum += score
-		count ++
+		count++
 	}
-	res = sum/float32(count)
+	res = sum / float32(count)
 
 	return
 }
@@ -200,11 +200,11 @@ func (r *ratingRepo) UpdateByID(
 			"rating_id": ratingID,
 		}).
 		SetMap(map[string]interface{}{
-			"menu_id":    order.MenuID,
-			"score":     order.Score,
-			"remarks":     order.Remarks,
-			"date_recorded":     order.DateRecorded,
-			"customer_id":     order.CustomerID,
+			"menu_id":       order.MenuID,
+			"score":         order.Score,
+			"remarks":       order.Remarks,
+			"date_recorded": order.DateRecorded,
+			"customer_id":   order.CustomerID,
 		}).
 		RunWith(r.Writer).
 		PlaceholderFormat(sq.Question)
@@ -295,7 +295,7 @@ func (r *ratingRepo) BulkInsert(
 				ord.MenuID,
 				ord.Score,
 				ord.Remarks,
-				ord.DateRecorded,
+				sq.Expr("NOW()"),
 				ord.CustomerID,
 			).
 			PlaceholderFormat(sq.Question)

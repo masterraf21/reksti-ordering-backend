@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS menu_type (
 CREATE TABLE IF NOT EXISTS orders (
   `order_id` int(11) NOT NULL AUTO_INCREMENT,
   `customer_id` int(11) NOT NULL,
-  `order_date` date NOT NULL,
+  `order_date` datetime NOT NULL,
   `total_price` float,
   `order_location` varchar(200) NOT NULL,
   `order_status` int(1) NOT NULL DEFAULT 0,
@@ -54,7 +54,7 @@ CREATE TABLE IF NOT EXISTS payment (
   `order_id` int(11) NOT NULL,
   `amount` float NOT NULL,
   `payment_type_id` int(11) NOT NULL,
-  `payment_date` date NOT NULL,
+  `payment_date` datetime NOT NULL,
   `payment_status` int(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`payment_id`),
   KEY `order_id` (`order_id`)
@@ -65,7 +65,7 @@ CREATE TABLE IF NOT EXISTS rating (
   `menu_id` int(11) NOT NULL,
   `score` int(1) NOT NULL,
   `remarks` varchar(100) NOT NULL,
-  `date_recorded` date NOT NULL,
+  `date_recorded` datetime NOT NULL,
   `customer_id` int(11) NOT NULL,
   PRIMARY KEY (`rating_id`),
   KEY `menu_id` (`menu_id`),

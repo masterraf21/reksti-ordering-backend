@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/suite"
 
@@ -105,11 +106,10 @@ func (s *ratingRepoTestSuite) TearDownTest() {
 func (s *ratingRepoTestSuite) TestInserts() {
 	s.Run("Store Rating", func() {
 		rating := models.Rating{
-			MenuID:       s.MenuID,
-			Score:        7,
-			Remarks:      "Halooo",
-			DateRecorded: "2021-04-14",
-			CustomerID:   s.CustomerID,
+			MenuID:     s.MenuID,
+			Score:      7,
+			Remarks:    "Halooo",
+			CustomerID: s.CustomerID,
 		}
 		id, err := s.Repo.Store(&rating)
 		if err != nil {
@@ -134,11 +134,10 @@ func (s *ratingRepoTestSuite) TestInserts() {
 func (s *ratingRepoTestSuite) TestGet() {
 	s.Run("Get Rating By Id", func() {
 		rating := models.Rating{
-			MenuID:       s.MenuID,
-			Score:        7,
-			Remarks:      "Halooo",
-			DateRecorded: "2021-04-14",
-			CustomerID:   s.CustomerID,
+			MenuID:     s.MenuID,
+			Score:      7,
+			Remarks:    "Halooo",
+			CustomerID: s.CustomerID,
 		}
 		id, err := s.Repo.Store(&rating)
 		if err != nil {
@@ -161,11 +160,10 @@ func (s *ratingRepoTestSuite) TestGet() {
 
 	s.Run("Get Rating by Menu", func() {
 		rating := models.Rating{
-			MenuID:       s.MenuID,
-			Score:        7,
-			Remarks:      "Halooo",
-			DateRecorded: "2021-04-14",
-			CustomerID:   s.CustomerID,
+			MenuID:     s.MenuID,
+			Score:      7,
+			Remarks:    "Halooo",
+			CustomerID: s.CustomerID,
 		}
 		_, err := s.Repo.Store(&rating)
 		if err != nil {
@@ -187,11 +185,10 @@ func (s *ratingRepoTestSuite) TestGet() {
 
 	s.Run("Get Menu Score", func() {
 		rating := models.Rating{
-			MenuID:       s.MenuID,
-			Score:        7,
-			Remarks:      "Halooo",
-			DateRecorded: "2021-04-14",
-			CustomerID:   s.CustomerID,
+			MenuID:     s.MenuID,
+			Score:      7,
+			Remarks:    "Halooo",
+			CustomerID: s.CustomerID,
 		}
 		id, err := s.Repo.Store(&rating)
 		if err != nil {
@@ -212,11 +209,10 @@ func (s *ratingRepoTestSuite) TestGet() {
 func (s *ratingRepoTestSuite) TestGet2() {
 	s.Run("Get All Rating", func() {
 		rating := models.Rating{
-			MenuID:       s.MenuID,
-			Score:        7,
-			Remarks:      "Halooo",
-			DateRecorded: "2021-04-14",
-			CustomerID:   s.CustomerID,
+			MenuID:     s.MenuID,
+			Score:      7,
+			Remarks:    "Halooo",
+			CustomerID: s.CustomerID,
 		}
 		for i := 0; i < 5; i++ {
 			id, err := s.Repo.Store(&rating)
@@ -238,12 +234,14 @@ func (s *ratingRepoTestSuite) TestGet2() {
 
 func (s *ratingRepoTestSuite) TestUpdate() {
 	s.Run("Update Rating", func() {
+		now := time.Now()
+		nowInsert := now.Format(time.RFC3339)
 		rating := models.Rating{
 			MenuID:       s.MenuID,
 			Score:        7,
 			Remarks:      "Halooo",
-			DateRecorded: "2021-04-14",
 			CustomerID:   s.CustomerID,
+			DateRecorded: nowInsert,
 		}
 		id, err := s.Repo.Store(&rating)
 		if err != nil {
@@ -255,8 +253,8 @@ func (s *ratingRepoTestSuite) TestUpdate() {
 			MenuID:       s.MenuID,
 			Score:        5,
 			Remarks:      "Tested by Tape",
-			DateRecorded: "2021-04-14",
 			CustomerID:   s.CustomerID,
+			DateRecorded: nowInsert,
 		}
 
 		err = s.Repo.UpdateByID(id, &rating2)
@@ -278,11 +276,10 @@ func (s *ratingRepoTestSuite) TestUpdate() {
 func (s *ratingRepoTestSuite) TestDelete() {
 	s.Run("Delete Order By ID", func() {
 		rating := models.Rating{
-			MenuID:       s.MenuID,
-			Score:        7,
-			Remarks:      "Halooo",
-			DateRecorded: "2021-04-14",
-			CustomerID:   s.CustomerID,
+			MenuID:     s.MenuID,
+			Score:      7,
+			Remarks:    "Halooo",
+			CustomerID: s.CustomerID,
 		}
 		id, err := s.Repo.Store(&rating)
 		if err != nil {

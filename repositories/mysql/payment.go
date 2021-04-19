@@ -3,7 +3,6 @@ package mysql
 import (
 	"context"
 	"database/sql"
-	"time"
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/masterraf21/reksti-ordering-backend/models"
@@ -129,8 +128,6 @@ func (t *paymentRepo) Store(
 	payment *models.Payment,
 ) (paymentID uint32, err error) {
 	table := "payment"
-	now := time.Now()
-	nowInsert := now.Format(time.RFC3339)
 
 	query := sq.Insert(table).
 		Columns(
@@ -143,7 +140,7 @@ func (t *paymentRepo) Store(
 			payment.OrderID,
 			payment.Amount,
 			payment.PaymentTypeID,
-			nowInsert,
+			sq.Expr("NOW()"),
 		).RunWith(t.Writer).
 		PlaceholderFormat(sq.Question)
 	sqlInsert, argsInsert, err := query.ToSql()

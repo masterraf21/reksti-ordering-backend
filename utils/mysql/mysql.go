@@ -42,7 +42,7 @@ func createConnection(config Option) (db *sql.DB, err error) {
 
 	auth := config.User + ":" + config.Password
 	uri := "tcp(" + config.Host + ":" + config.Port + ")"
-	dsn := auth + "@" + uri + "/" + config.Database
+	dsn := auth + "@" + uri + "/" + config.Database + "?parseTime=true"
 
 	db, err = sql.Open("mysql", dsn)
 	if err != nil {
