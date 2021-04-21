@@ -32,6 +32,7 @@ func NewPaymentAPI(r *mux.Router, pac models.PaymentUsecase, ptc models.PaymentT
 	r.HandleFunc("/payment/{id_payment}", paymentAPI.DeleteByID).Methods("DELETE")
 	r.HandleFunc("/payment/type/{id_payment_type}", paymentAPI.DeleteTypeByID).Methods("DELETE")
 	r.HandleFunc("/payment/{id_payment}/status", paymentAPI.UpdateStatus).Methods("PUT")
+	r.HandleFunc("/payment/list/{id_customer}", paymentAPI.GetListOfPaymentsByCustomerID).Methods("GET")
 }
 
 func (p *paymentAPI) UpdateStatus(w http.ResponseWriter, r *http.Request) {
@@ -302,4 +303,29 @@ func (p *paymentAPI) Create(w http.ResponseWriter, r *http.Request) {
 	response.PaymentID = id
 
 	httpUtils.HandleJSONResponse(w, r, response)
+}
+
+func (p *paymentAPI) GetListOfPaymentsByCustomerID(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+
+	customerID, err := strconv.ParseInt(params["id_customer"], 10, 64)
+
+	result, err := p.paymentUsecase.GetListOfPaymentsByCustomerID(context.TODO(), uint32(customerID))
+	if err != nil {
+		httpUtils.HandleError(
+			w,
+			r,
+			err,
+			"failed to get list of payment by customer id",
+			http.StatusInternalServerError,
+		)
+		return
+	}
+
+	var dataa struct {
+		Data []models.Payment `json:"data"`
+	}
+
+	dataa.Data = result
+	httpUtils.HandleJSONResponse(w, r, dataa)
 }
