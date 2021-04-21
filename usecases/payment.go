@@ -41,3 +41,8 @@ func (u *paymentUsecase) CreatePayment(ctx context.Context, payment *models.Paym
 	id, err = u.PaymentRepo.Store(ctx, payment)
 	return
 }
+
+func (u *paymentUsecase) GetListOfPaymentsByCustomerID(ctx context.Context, customerID uint32) (res []models.Payment, err error) {
+	res, err = u.PaymentRepo.GetListOfPaymentsByCustomerID(ctx,customerID)
+	return res, err
+}
