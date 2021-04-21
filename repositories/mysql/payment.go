@@ -3,6 +3,7 @@ package mysql
 import (
 	"context"
 	"database/sql"
+	"log"
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/masterraf21/reksti-ordering-backend/models"
@@ -159,5 +160,33 @@ func (t *paymentRepo) Store(
 	}
 	paymentID = uint32(id)
 
+	return
+}
+
+func (t *paymentRepo) GetListOfPaymentsByCustomerID(ctx context.Context, customerID uint32) (res []models.Payment, err error) {
+
+	rows, err := t.Reader.QueryContext(ctx, "SELECT p.payment_id, p.order_id, p.amount, p.payment_type_id, p.payment_date, p.payment_status FROM payment p JOIN orders on p.order_id = orders.order_id JOIN customer on orders.customer_id = customer.customer_id WHERE customer.customer_id = ?", customerID)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		var r models.Payment
+		err = rows.Scan(
+			&r.PaymentID,
+			&r.OrderID,
+			&r.Amount,
+			&r.PaymentTypeID,
+			&r.PaymentDate,
+			&r.PaymentStatus,
+		)
+		if err != nil {
+			logger.Error("Selection Failed: " + err.Error())
+		}
+		res = append(res, r)
+	}
 	return
 }

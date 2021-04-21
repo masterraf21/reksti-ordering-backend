@@ -1,0 +1,2 @@
+GET http://localhost:8000/payment/list/100
+Accept: application/json

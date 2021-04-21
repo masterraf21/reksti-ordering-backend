@@ -21,6 +21,7 @@ type PaymentRepository interface {
 	DeleteByID(ctx context.Context, paymentID uint32) error
 	Store(ctx context.Context, payment *Payment) (uint32, error)
 	UpdateStatus(ctx context.Context, paymentID uint32, status int32) error
+	GetListOfPaymentsByCustomerID(ctx context.Context, customerID uint32) ([]Payment, error)
 }
 
 // PaymentUsecase for payment
@@ -30,4 +31,5 @@ type PaymentUsecase interface {
 	DeleteByID(ctx context.Context, paymentID uint32) error
 	CreatePayment(ctx context.Context, payment *Payment) (uint32, error)
 	UpdateStatus(ctx context.Context, paymentID uint32, status int32) error
+	GetListOfPaymentsByCustomerID(ctx context.Context, customerID uint32) ([]Payment, error)
 }
